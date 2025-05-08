@@ -23,14 +23,17 @@ const (
 	ignoredTagScript   = "script"
 )
 
-// InjectNodeIdentityAttributes 为 HTML 模板中每个节点添加唯一 node-key 和属性占位符
+/*
+	InjectNodeIdentityAttributes 为 HTML 模板中每个节点添加唯一 node-key 和属性占位符
+
+使用场景: 新增/修改html模板时，为每个节点注入唯一标识和动态属性占位符，方便后续渲染时动态填充属性值。
+*/
 func InjectNodeIdentityAttributes(tpl string) (string, error) {
 	tpl = strings.TrimSpace(tpl)
 	if tpl == "" {
 		return "", nil
 	}
-
-	root, err := parseHTMLWithWrapper(tpl)
+	root, isFullHTMLDocument, err := parseHTML(tpl)
 	if err != nil {
 		return "", errors.WithMessagef(err, "failed to parse template")
 	}
@@ -54,22 +57,36 @@ func InjectNodeIdentityAttributes(tpl string) (string, error) {
 		placeholder := fmt.Sprintf("{{%s}}", fmt.Sprintf(attrPlaceholderFmt, nodeKey))
 		setAttr(node, placeholder, "")
 	}
-	return OutputHTML(root, false), nil
+	return OutputHTML(root, isFullHTMLDocument), nil
 }
 
-// parseHTMLWithWrapper 将模板包裹在 div 中，便于解析多根节点模板
-func parseHTMLWithWrapper(tpl string) (*html.Node, error) {
+// isFullHTMLDocument 判断是否为完整的 HTML 文档（包含 <!DOCTYPE> 或 <html>）
+func isFullHTMLDocument(htmlStr string) bool {
+	htmlStr = strings.TrimSpace(strings.ToLower(htmlStr))
+	return strings.HasPrefix(htmlStr, "<!doctype") || strings.Contains(htmlStr, "<html")
+}
+
+// parseHTML 将模板片段 包裹在 div 中，便于解析多根节点模板
+func parseHTML(tpl string) (root *html.Node, isFullHtmlDoc bool, err error) {
+	isFullHtmlDoc = isFullHTMLDocument(tpl)
+	if isFullHtmlDoc {
+		root, err = htmlquery.Parse(strings.NewReader(tpl))
+		if err != nil {
+			return nil, false, err
+		}
+		return root, isFullHtmlDoc, nil
+	}
 	docID := fmt.Sprintf("wrapper-id-%s", uuidWithoutDash())
 	wrapped := fmt.Sprintf(`<div id="%s">%s</div>`, docID, tpl)
 	doc, err := htmlquery.Parse(strings.NewReader(wrapped))
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
-	root := htmlquery.FindOne(doc, fmt.Sprintf(`//*[@id='%s']`, docID))
+	root = htmlquery.FindOne(doc, fmt.Sprintf(`//*[@id='%s']`, docID))
 	if root == nil {
-		return nil, fmt.Errorf("wrapper node not found")
+		return nil, false, fmt.Errorf("wrapper node not found")
 	}
-	return root, nil
+	return root, isFullHtmlDoc, nil
 }
 
 // getAttrValue 获取属性值（忽略大小写）
