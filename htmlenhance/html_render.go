@@ -1,7 +1,10 @@
 package htmlenhance
 
 /*
-完全copy from golang.org/x/net/html/render.go 对render1 进行了一点修改，主要实现{{xxxAttrs}}="" 改下成 {{xxxAttrs}}
+完全copy from golang.org/x/net/html/render.go 对render1 进行了一点修改，
+1. 实现{{xxxAttrs}}="" 改下成 {{xxxAttrs}}
+2. 属性支持 x-data='' 或者 x-data="" 这种写法，具体使用",' 根据属性值来判断
+
 */
 import (
 	"bufio"
@@ -139,15 +142,10 @@ func render1(w writer, n *html.Node) error {
 			return err
 		}
 		if a.Val != "" {
-			if _, err := w.WriteString(`="`); err != nil {
+			if _, err := w.WriteString(`=`); err != nil {
 				return err
 			}
-			if err := escape(w, a.Val); err != nil {
-				return err
-			}
-			if err := w.WriteByte('"'); err != nil {
-				return err
-			}
+			writeQuoted(w, a.Val)
 		}
 
 	}
