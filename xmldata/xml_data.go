@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/clbanning/mxj/v2"
 	"github.com/pkg/errors"
@@ -15,6 +16,7 @@ const (
 
 // 解码xml数据
 func Decode(xmlData string) (mv mxj.Map, err error) {
+	xmlData = strings.TrimSpace(xmlData)
 	if xmlData == "" {
 		return nil, nil
 	}
@@ -38,11 +40,22 @@ func getValFromMap(mv mxj.Map, path string) (subMv mxj.Map, err error) {
 	if err != nil {
 		return nil, errors.WithMessage(err, "getValFromMap")
 	}
-	mv, ok := an.(map[string]any)
-	if !ok {
-		return nil, errors.Errorf("getValFromMap: %v is not map[string]any", an)
+	switch v := an.(type) {
+	case string:
+		if v == "" {
+			return subMv, nil
+		}
+		err = json.Unmarshal([]byte(v), &subMv)
+		if err != nil {
+			return nil, err
+		}
+		return subMv, nil
+	case map[string]any:
+		return v, nil
+	default:
+		err = errors.Errorf("getValFromMap: not soupport type %T, data:%v", an, an)
+		return nil, err
 	}
-	return mv, nil
 }
 
 // 解码数据，支持json和xml格式
