@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/antchfx/htmlquery"
+	"github.com/cbroglie/mustache"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"golang.org/x/net/html"
@@ -125,4 +126,18 @@ func OutputHTML(n *html.Node, self bool) string {
 		}
 	}
 	return b.String()
+}
+
+//RenderHtmlTpl 渲染html模板，并返回渲染后的字符串。如果传入空字符串则直接返回""
+
+func RenderHtmlTpl(htmlTpl string, context ...any) (renderdHtml string, err error) {
+	if htmlTpl == "" {
+		return "", nil
+	}
+	renderd, err := mustache.RenderRaw(htmlTpl, true, context...) //强制渲染为原始字符串，而不是html转义后的字符串
+	if err != nil {
+		err := errors.WithMessagef(err, "RenderHtmlTpl:%s", htmlTpl)
+		return "", err
+	}
+	return renderd, nil
 }

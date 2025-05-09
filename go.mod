@@ -8,7 +8,9 @@ require (
 	github.com/clbanning/mxj/v2 v2.7.0
 	github.com/google/uuid v1.6.0
 	github.com/pkg/errors v0.9.1
+	github.com/spf13/cast v1.8.0
 	github.com/stretchr/testify v1.10.0
+	github.com/suifengpiao14/funcs v0.0.25
 	golang.org/x/net v0.40.0
 )
 

@@ -9,6 +9,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	var_placeholder_pattern = `{{{?([\w\.\-]+)}?}}` //匹配 {{var}} 或 {{{var}}}，其中 var 仅包含字母、数字、下划线、句点
+)
+
+var varPlaceholderPattern = regexp.MustCompile(var_placeholder_pattern)
+
 func RenderXmlDataTemplate(xmlDataTpl string, context ...any) (xmlData string) {
 	if xmlDataTpl == "" {
 		return ""
@@ -25,7 +31,7 @@ func RenderXmlDataTemplate(xmlDataTpl string, context ...any) (xmlData string) {
 // WrapVariableWithCDATA 包裹 {{var}}/{{{var}}} 变量，避免嵌套 CDATA，变量名支持 a-zA-Z0-9_.。
 func WrapVariableWithCDATA(tpl string) string {
 	// 匹配 {{var}} 或 {{{var}}}，其中 var 仅包含字母、数字、下划线、句点
-	varPattern := regexp.MustCompile(`{{{?([a-zA-Z0-9_.]+)}?}}`)
+	varPattern := varPlaceholderPattern
 
 	// 获取 CDATA 区间
 	cdataRanges := findCDATARanges(tpl)
