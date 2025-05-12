@@ -55,10 +55,15 @@ func InjectNodeIdentityAttributes(tpl string) (string, error) {
 		setAttr(node, DataNodeKeyAttr, nodeKey)
 
 		// 添加动态属性占位符（Key = {{nodeKeyAttrs}}）
-		placeholder := fmt.Sprintf("{{%s}}", fmt.Sprintf(attrPlaceholderFmt, nodeKey))
+		placeholder := AttrPlaceholderName(nodeKey)
 		setAttr(node, placeholder, "")
 	}
 	return OutputHTML(root, isFullHTMLDocument), nil
+}
+
+func AttrPlaceholderName(nodeKey string) string {
+	placeholder := fmt.Sprintf("{{%s}}", fmt.Sprintf(attrPlaceholderFmt, nodeKey))
+	return placeholder
 }
 
 // isFullHTMLDocument 判断是否为完整的 HTML 文档（包含 <!DOCTYPE> 或 <html>）
