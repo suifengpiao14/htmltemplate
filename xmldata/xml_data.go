@@ -59,7 +59,7 @@ func getValFromMap(mv mxj.Map, path string) (subMv mxj.Map, err error) {
 }
 
 // 解码数据，支持json和xml格式
-func DecodeTplData(dataTpl []byte, data any) (mv mxj.Map, err error) {
+func DecodeTplData(dataTpl []byte, data ...any) (mv mxj.Map, err error) {
 	dataTpl = bytes.TrimSpace(dataTpl)
 	if len(dataTpl) == 0 {
 		return nil, nil
@@ -69,7 +69,7 @@ func DecodeTplData(dataTpl []byte, data any) (mv mxj.Map, err error) {
 	isJson := isJsonData(dateTplByte)
 	//json 处理
 	if isJson {
-		mv, err = decodeTplDataJson(dataTpl, data)
+		mv, err = decodeTplDataJson(dataTpl, data...)
 		if err != nil {
 			err = errors.WithMessage(err, "DecodeTplData decodeTplDataJson")
 			return nil, err
@@ -77,17 +77,17 @@ func DecodeTplData(dataTpl []byte, data any) (mv mxj.Map, err error) {
 		return mv, nil
 	}
 
-	xmlData := RenderXmlDataTemplate(string(dataTpl), data)
+	xmlData := RenderXmlDataTemplate(string(dataTpl), data...)
 	mv, err = Decode(xmlData)
 	if err != nil {
-		err = errors.WithMessage(err, "DecodeTplData RenderXmlDataTemplate")
+		err = errors.WithMessagef(err, "DecodeTplData xml:%s", xmlData)
 		return nil, err
 	}
 
 	return mv, nil
 }
 
-func decodeTplDataJson(dataTpl []byte, data any) (mv mxj.Map, err error) {
+func decodeTplDataJson(dataTpl []byte, data ...any) (mv mxj.Map, err error) {
 	if !hasVarPlaceholder(dataTpl) { // 没有占位符，直接返回json数据
 		err = json.Unmarshal(dataTpl, &mv)
 		if err != nil {
@@ -110,7 +110,7 @@ func decodeTplDataJson(dataTpl []byte, data any) (mv mxj.Map, err error) {
 		return nil, err
 	}
 
-	xmlData := RenderXmlDataTemplate(string(dataTpl), data)
+	xmlData := RenderXmlDataTemplate(string(dataTpl), data...)
 	mv, err = Decode(xmlData)
 	if err != nil {
 		err = errors.WithMessage(err, "decodeTplDataJson Decode")

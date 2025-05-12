@@ -219,10 +219,73 @@ type userInfo struct {
 }
 
 func TestRanderSubPage(t *testing.T) {
+
+	var TestHtmlComponentIndexAssembles = htmlcomponent.Assembles{
+		{
+			PageName:      "html/component",
+			ComponentName: "suifengpiao14/table",
+			AssembleName:  "table",
+			DataTpl: `
+			<headers>
+			<column>name</column>
+			<title>姓名</title>
+			</headers>
+			<headers>
+			<column>age</column>
+			<title>年龄</title>
+			</headers>
+			<headers>
+			<column>birthday</column>
+			<title>生日</title>
+			</headers>
+			<headers>
+			<column>action</column>
+			<title>操作</title>
+			</headers>
+			{{#rows}}
+			<rows>
+			<column>name</column>
+			<value>{{name}}</value>
+			</rows>
+			<rows>
+			<column>age</column>
+			<value>{{age}}</value>
+			<attrs>class="text-red"</attrs>
+			</rows>
+			<rows>
+			<column>birthday</column>
+			<value>{{birthday}}</value>
+			</rows>
+			<rows>
+			<column>action</column>
+			<value><![CDATA[<button>编辑</button><button>删除</button>]]></value>
+			</rows>
+			{{/rows}}
+			`,
+		},
+		{
+			PageName:      "test/htmlComponent",
+			ComponentName: "suifengpiao14/tab",
+		},
+	}
+
 	pageName := "html/component"
 	as := TestHtmlComponentIndexAssembles.FilterByPageName(pageName)
-	tableData := rows2TableData()
-	tableDataMap := tableData.ToMap()
+	tableDataMap := map[string]any{
+		"rows": []map[string]any{
+			{
+				"name":     "张三",
+				"age":      20,
+				"birthday": "1998-01-01",
+			},
+			{
+				"name":     "李四",
+				"age":      30,
+				"birthday": "1990-01-01",
+			},
+		},
+	}
+
 	allData := map[string]any{
 		"tableInput": tableDataMap,
 	}

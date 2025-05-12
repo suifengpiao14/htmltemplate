@@ -174,11 +174,9 @@ var TableComponent = Component{
 	{{#rows}}
 	<rows>
 	{{#.}}
-	<>
 		<column>{{{column}}}</column>
 		<value>{{{value}}}</value>
 		<attrs>{{{attrs}}}</attrs>
-	</>
 	{{/.}}
 	</rows>
 	{{/rows}}
