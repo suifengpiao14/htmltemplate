@@ -148,7 +148,7 @@ var TableComponent = Component{
             <thead class="bg-indigo-600 text-white">
                 <tr>
                     {{#headers}}
-                    <th class="px-6 py-3 text-left text-sm font-medium" data-name={{name}} {{{attrs}}}>{{{title}}}</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium" data-column="{{column}}" {{{attrs}}}>{{{title}}}</th>
                     {{/headers}}
 
                 </tr>
@@ -157,7 +157,7 @@ var TableComponent = Component{
                 {{#rows}}
                 <tr class="border-b hover:bg-gray-50">
                     {{#columns}}
-                    <td class="px-6 py-4 text-sm" data-name={{name}} {{{attrs}}}>{{{value}}}</td>
+                    <td class="px-6 py-4 text-sm" data-column="{{column}}" {{{attrs}}}>{{{value}}}</td>
                     {{/columns}}
                 </tr>
                 {{/rows}}
