@@ -148,7 +148,7 @@ var TableComponent = Component{
             <thead class="bg-indigo-600 text-white">
                 <tr>
                     {{#headers}}
-                    <th class="px-6 py-3 text-left text-sm font-medium">{{{title}}}</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium" data-name={{name}} {{{attrs}}}>{{{title}}}</th>
                     {{/headers}}
 
                 </tr>
@@ -156,9 +156,9 @@ var TableComponent = Component{
             <tbody>
                 {{#rows}}
                 <tr class="border-b hover:bg-gray-50">
-                    {{#.}}
-                    <td class="px-6 py-4 text-sm" {{{attrs}}}>{{{value}}}</td>
-                    {{/.}}
+                    {{#columns}}
+                    <td class="px-6 py-4 text-sm" data-name={{name}} {{{attrs}}}>{{{value}}}</td>
+                    {{/columns}}
                 </tr>
                 {{/rows}}
             </tbody>
@@ -173,11 +173,13 @@ var TableComponent = Component{
 
 	{{#rows}}
 	<rows>
-	{{#.}}
+	{{#columns}}
+	<columns>
 		<column>{{{column}}}</column>
 		<value>{{{value}}}</value>
 		<attrs>{{{attrs}}}</attrs>
-	{{/.}}
+	</columns>
+	{{/columns}}
 	</rows>
 	{{/rows}}
 `,
@@ -188,10 +190,10 @@ var TableComponent = Component{
 		{"column":"title","title":"名称"}
 	],
 	"rows":[
-		[
-		{"column":"id","value":"1"},
-		{"column":"value","value":"张三","attrs":"class=\"text-red\""}
-		]
+{
+	"columns":[{"column":"id","value":"1"},{"column":"value","value":"张三","attrs":"class=\"text-red\""}]
+}
+
 	]
 }
 `,
@@ -359,7 +361,11 @@ var AllComponent = Components{
 
 type TableData struct {
 	Headers []TableHeader `json:"headers"`
-	Rows    [][]TableCell `json:"rows"`
+	Rows    []TableRow    `json:"rows"`
+}
+
+type TableRow struct {
+	Columns []TableCell `json:"columns"` // xml 不支持[[{},{}]] 格式三维数组，所以改成{"rows":[{"columns":[{},{}]}]}
 }
 
 func (td TableData) ToMap() map[string]any {
@@ -370,6 +376,7 @@ func (td TableData) ToMap() map[string]any {
 type TableHeader struct {
 	Column string `json:"column"`
 	Title  string `json:"title"`
+	Attrs  string `json:"attrs"`
 }
 
 type TableHeaders []TableHeader
@@ -383,7 +390,7 @@ type TableCell struct {
 func Rows2TableData[S ~[]T, T any](tableHeaders TableHeaders, rows S) (tableData TableData) {
 	tableData = TableData{
 		Headers: tableHeaders,
-		Rows:    make([][]TableCell, 0),
+		Rows:    make([]TableRow, 0),
 	}
 	if len(rows) == 0 {
 		return
@@ -399,14 +406,15 @@ func Rows2TableData[S ~[]T, T any](tableHeaders TableHeaders, rows S) (tableData
 	}
 
 	for _, rowMap := range rowsMap {
-		tableRow := make([]TableCell, 0)
+		tableRow := TableRow{
+			Columns: make([]TableCell, 0),
+		}
 		for _, tableHeader := range tableHeaders {
 			tableCell := TableCell{
 				Column: tableHeader.Column,
 				Value:  cast.ToString(rowMap[tableHeader.Column]),
 			}
-			tableRow = append(tableRow, tableCell)
-
+			tableRow.Columns = append(tableRow.Columns, tableCell)
 		}
 		tableData.Rows = append(tableData.Rows, tableRow)
 	}

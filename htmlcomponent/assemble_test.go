@@ -162,47 +162,23 @@ func TestGetDependence(t *testing.T) {
 	fmt.Println(dependences)
 }
 
-var TestHtmlComponentIndexAssembles = htmlcomponent.Assembles{
-	{
-		PageName:      "html/component",
-		ComponentName: "suifengpiao14/table",
-		AssembleName:  "table",
-		DataTpl: `{
-		"headers": [{"column":"name","title":"姓名"},{"column":"age","title":"年龄"},{"column":"birthday","title":"生日"},{"column":"action","title":"操作"}],
-		"rows": [
-		{{#items}}
-		[
-			{"column": "name","value": "{{name}}"},
-			{"column": "age", "value": "{{age}}","attrs": "class=\"text-red\""},
-			{"column": "birthday", "value": "{{birthday}}"},
-			{"column": "action", "value": "<button>编辑</button><button>删除</button>"}
-		],
-		{{/items}}
-	]
-		}`,
-	},
-	{
-		PageName:      "test/htmlComponent",
-		ComponentName: "suifengpiao14/tab",
-	},
-}
-
 func TestRanderTable(t *testing.T) {
 	pageName := "html/component"
-	as := TestHtmlComponentIndexAssembles.FilterByPageName(pageName)
-	rows := []userInfo{
+	var TestHtmlComponentIndexAssembles = htmlcomponent.Assembles{
 		{
-			Name:     "张三",
-			Age:      20,
-			Birthday: "1998-01-01",
+			PageName:      "html/component",
+			ComponentName: "suifengpiao14/table",
+			AssembleName:  "table",
 		},
 		{
-			Name:     "李四",
-			Age:      30,
-			Birthday: "1997-01-01",
+			PageName:      "test/htmlComponent",
+			ComponentName: "suifengpiao14/tab",
 		},
 	}
-	rowsMap := funcs.Struct2JsonMap(map[string]any{"items": rows})
+
+	as := TestHtmlComponentIndexAssembles.FilterByPageName(pageName)
+	data := rows2TableData()
+	rowsMap := funcs.Struct2JsonMap(data)
 	allData := map[string]any{
 		"tableInput": rowsMap,
 	}
@@ -242,25 +218,27 @@ func TestRanderSubPage(t *testing.T) {
 			<column>action</column>
 			<title>操作</title>
 			</headers>
-			{{#rows}}
+			{{#items}}
 			<rows>
-			<column>name</column>
-			<value>{{name}}</value>
+				<columns>
+				<column>name</column>
+				<value>{{name}}</value>
+				</columns>
+				<columns>
+				<column>age</column>
+				<value>{{age}}</value>
+				<attrs>class="text-red"</attrs>
+				</columns>
+				<columns>
+				<column>birthday</column>
+				<value>{{birthday}}</value>
+				</columns>
+				<columns>
+				<column>action</column>
+				<value><![CDATA[<button>编辑</button><button>删除</button>]]></value>
+				</columns>
 			</rows>
-			<rows>
-			<column>age</column>
-			<value>{{age}}</value>
-			<attrs>class="text-red"</attrs>
-			</rows>
-			<rows>
-			<column>birthday</column>
-			<value>{{birthday}}</value>
-			</rows>
-			<rows>
-			<column>action</column>
-			<value><![CDATA[<button>编辑</button><button>删除</button>]]></value>
-			</rows>
-			{{/rows}}
+			{{/items}}
 			`,
 		},
 		{
@@ -272,7 +250,7 @@ func TestRanderSubPage(t *testing.T) {
 	pageName := "html/component"
 	as := TestHtmlComponentIndexAssembles.FilterByPageName(pageName)
 	tableDataMap := map[string]any{
-		"rows": []map[string]any{
+		"items": []map[string]any{
 			{
 				"name":     "张三",
 				"age":      20,

@@ -101,25 +101,3 @@ func TestDecode2(t *testing.T) {
 	fmt.Println(s)
 
 }
-
-func TestDecodeTplData(t *testing.T) {
-	jsonStr := []byte(`
-	{
-		"headers": [{"column":"name","title":"姓名"},{"column":"age","title":"年龄"},{"column":"birthday","title":"生日"},{"column":"action","title":"操作"}],
-		"rows": [
-		[
-			{"column": "name","value": "{{name}}"},
-			{"column": "age", "value": "{{age}}","attrs": "class=\"text-red\""},
-			{"column": "birthday", "value": "{{birthday}}"},
-			{"column": "action", "value": "<button>编辑</button><button>删除</button>"}
-		]
-	]
-		}
-	`)
-	mv, err := xmldata.DecodeTplData(jsonStr)
-	require.NoError(t, err)
-	b, err := mv.XmlIndent("", "  ", "root")
-	require.NoError(t, err)
-	s := string(b)
-	fmt.Println(s)
-}
