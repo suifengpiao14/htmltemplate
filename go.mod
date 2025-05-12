@@ -11,7 +11,6 @@ require (
 	github.com/spf13/cast v1.8.0
 	github.com/stretchr/testify v1.10.0
 	github.com/suifengpiao14/funcs v0.0.25
-	github.com/titanous/json5 v1.0.0
 	golang.org/x/net v0.33.0
 )
 

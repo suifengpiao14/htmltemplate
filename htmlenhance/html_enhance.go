@@ -19,7 +19,7 @@ import (
 */
 
 const (
-	dataNodeKeyAttr    = "data-node-key"
+	DataNodeKeyAttr    = "data-node-key"
 	attrPlaceholderFmt = "%sAttrs"
 	ignoredTagScript   = "script"
 )
@@ -46,13 +46,13 @@ func InjectNodeIdentityAttributes(tpl string) (string, error) {
 		}
 
 		// 跳过已有 data-node-key 的节点
-		if getAttrValue(node, dataNodeKeyAttr) != "" {
+		if getAttrValue(node, DataNodeKeyAttr) != "" {
 			continue
 		}
 
 		// 设置唯一 node-key
 		nodeKey := uuidWithoutDash()
-		setAttr(node, dataNodeKeyAttr, nodeKey)
+		setAttr(node, DataNodeKeyAttr, nodeKey)
 
 		// 添加动态属性占位符（Key = {{nodeKeyAttrs}}）
 		placeholder := fmt.Sprintf("{{%s}}", fmt.Sprintf(attrPlaceholderFmt, nodeKey))
