@@ -382,7 +382,7 @@ type TableCell struct {
 	Attrs  string `json:"attrs"`
 }
 
-func Rows2TableData[T any](tableHeaders TableHeaders, rows []T) (tableData TableData) {
+func Rows2TableData[S ~[]T, T any](tableHeaders TableHeaders, rows S) (tableData TableData) {
 	tableData = TableData{
 		Headers: tableHeaders,
 		Rows:    make([][]TableCell, 0),
