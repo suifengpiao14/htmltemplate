@@ -15,7 +15,7 @@ var htmlTpl = `
 `
 
 func TestInjectNodeIdentityAttributes(t *testing.T) {
-	newHtml, err := htmlenhance.InjectNodeIdentityAttributes(htmlTpl)
+	newHtml, err := htmlenhance.SetNodeIdAndAttrHolder(htmlTpl)
 	require.NoError(t, err)
 	println(newHtml)
 

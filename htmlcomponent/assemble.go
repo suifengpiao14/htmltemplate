@@ -1,14 +1,13 @@
 package htmlcomponent
 
 import (
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/suifengpiao14/funcs"
 	"github.com/suifengpiao14/htmltemplate/xmldata"
+	"github.com/suifengpiao14/memorytable"
 )
 
 type Assemble struct {
@@ -76,7 +75,8 @@ func (r Assemble) DecodeData(data map[string]any) (newData map[string]any, err e
 func (r Assemble) GetDependence() (dependences []string) {
 	dependences = make([]string, 0)
 	if r.DataTpl == "" {
-		return funcs.FilterEmpty(dependences)
+		dependences = memorytable.NewTable(dependences...).FilterEmpty()
+		return dependences
 	}
 	regexp := regexp.MustCompile(`\{\{\{?([\w\.\-]+)\}\}\}?`)
 	matches := regexp.FindAllStringSubmatch(r.DataTpl, -1)
@@ -85,7 +85,9 @@ func (r Assemble) GetDependence() (dependences []string) {
 		assembleName = strings.TrimSuffix(assembleName, "Input")
 		dependences = append(dependences, assembleName)
 	}
-	dependences = funcs.Uniqueue(funcs.FilterEmpty(dependences))
+	dependences = memorytable.NewTable(dependences...).FilterEmpty().Uniqueue(func(row string) (key string) {
+		return row
+	}).ToSlice()
 	return dependences
 }
 
@@ -97,21 +99,23 @@ func (r Assemble) GetDependence() (dependences []string) {
 type Assembles []Assemble
 
 func (as Assembles) FilterByPageName(PageName string) (onePageAssembles Assembles) {
-	onePageAssembles = funcs.Filter(as, func(a Assemble) bool {
+	rows := memorytable.NewTable(as...).Where(func(a Assemble) bool {
 		return a.PageName == PageName
-	})
-	return onePageAssembles
+	}).ToSlice()
+	return rows
 }
 func (as Assembles) Filter(filterFn func(a Assemble) bool) (subAssembles Assembles) {
-	subAssembles = funcs.Filter(as, func(a Assemble) bool {
+	rows := memorytable.NewTable(as...).Where(func(a Assemble) bool {
 		return filterFn(a)
-	})
-	return subAssembles
+	}).ToSlice()
+	return rows
 }
-func (as Assembles) GetByComponentName(componentName string) (assemble *Assemble, exists bool) {
-	return funcs.GetOne(as, func(item Assemble) bool {
-		return item.ComponentName == componentName
-	})
+func (as Assembles) GetByComponentName(componentName string) (assemble Assembles) {
+	rows := memorytable.NewTable(as...).Where(func(a Assemble) bool {
+		return a.ComponentName == componentName
+	}).ToSlice()
+	return rows
+
 }
 
 func (as Assembles) GetByAssembleName(assembleName string) (assemble *Assemble, index int) {
@@ -124,74 +128,12 @@ func (as Assembles) GetByAssembleName(assembleName string) (assemble *Assemble, 
 }
 
 func (as *Assembles) Insert(a Assemble, index int) {
-	tmp := []Assemble(*as)
-	funcs.SliceInsert(&tmp, a, index)
+	tmp := memorytable.NewTable(*as...).Insert(a, index)
 	*as = Assembles(tmp)
 }
 
 func (as *Assembles) InsertBefore(a Assemble, index int) {
 	as.Insert(a, index-1)
-}
-
-func (as Assembles) AssembleNodes() (withParents AssembleNodes) {
-	for i := range as {
-		as[i].dependences = as[i].GetDependence()
-	}
-	for i := range as {
-		a := as[i]
-		assembleName := a.AssembleName
-		subAs := funcs.Filter(as, func(item Assemble) bool {
-			return funcs.Contains(item.dependences, assembleName)
-		})
-		if len(subAs) == 0 {
-			withParents = append(withParents, AssembleNode{
-				PageName:      a.PageName,
-				ComponentName: a.ComponentName,
-				AssembleName:  a.AssembleName,
-			})
-			continue
-		}
-		for _, subA := range subAs {
-			withParents = append(withParents, AssembleNode{
-				PageName:            a.PageName,
-				ComponentName:       a.ComponentName,
-				AssembleName:        a.AssembleName,
-				ParentComponentName: subA.ComponentName,
-				ParentAssembleName:  subA.AssembleName,
-			})
-		}
-
-	}
-	return withParents
-}
-
-type AssembleNode struct {
-	PageName            string `json:"pageName"`
-	ComponentName       string `json:"componentName"`
-	AssembleName        string `json:"assembleName"`
-	ParentComponentName string `json:"parentComponentName"`
-	ParentAssembleName  string `json:"parentAssembleName"`
-}
-
-func (t AssembleNode) GetID() string {
-	return t.ComponentName
-}
-func (t AssembleNode) GetParentID() string {
-	return t.ParentComponentName
-}
-func (t AssembleNode) GetSiblingOrder() int {
-	return 0
-}
-
-type AssembleNodes []AssembleNode
-
-func (t AssembleNodes) Json() string {
-	b, err := json.Marshal(t)
-	if err != nil {
-		panic(err)
-	}
-	s := string(b)
-	return s
 }
 
 // resolveDependence 解析依赖关系，根据组件依赖的变量,以及组件的PlaceHolder,决定渲染顺序

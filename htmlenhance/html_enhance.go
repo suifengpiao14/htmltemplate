@@ -19,17 +19,17 @@ import (
 */
 
 const (
-	DataNodeKeyAttr    = "data-node-key"
+	dataNodeKeyAttr    = "data-node-key"
 	attrPlaceholderFmt = "%sAttrs"
 	ignoredTagScript   = "script"
 )
 
 /*
-	InjectNodeIdentityAttributes 为 HTML 模板中每个节点添加唯一 node-key 和属性占位符
+	SetNodeIdAndAttrHolder 为 HTML 模板中每个节点添加唯一 node-key 和属性占位符
 
 使用场景: 新增/修改html模板时，为每个节点注入唯一标识和动态属性占位符，方便后续渲染时动态填充属性值。
 */
-func InjectNodeIdentityAttributes(tpl string) (string, error) {
+func SetNodeIdAndAttrHolder(tpl string) (string, error) {
 	tpl = strings.TrimSpace(tpl)
 	if tpl == "" {
 		return "", nil
@@ -46,13 +46,13 @@ func InjectNodeIdentityAttributes(tpl string) (string, error) {
 		}
 
 		// 跳过已有 data-node-key 的节点
-		if getAttrValue(node, DataNodeKeyAttr) != "" {
+		if getAttrValue(node, dataNodeKeyAttr) != "" {
 			continue
 		}
 
 		// 设置唯一 node-key
 		nodeKey := uuidWithoutDash()
-		setAttr(node, DataNodeKeyAttr, nodeKey)
+		setAttr(node, dataNodeKeyAttr, nodeKey)
 
 		// 添加动态属性占位符（Key = {{nodeKeyAttrs}}）
 		placeholder := AttrPlaceholderName(nodeKey)

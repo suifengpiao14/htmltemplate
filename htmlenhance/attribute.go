@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/antchfx/htmlquery"
-	"github.com/suifengpiao14/funcs"
+	"github.com/suifengpiao14/memorytable"
 )
 
 /*
@@ -114,10 +114,7 @@ func (as *Attributes) ResetByKey(newAttr Attribute) {
 }
 
 func (a *Attributes) Append(attrs ...Attribute) {
-	tmp := []Attribute(*a)
-	tmp = funcs.AppendReplace(tmp, func(first Attribute, second Attribute) bool {
-		return first.NodeId == second.NodeId
-	}, attrs...)
+	tmp := memorytable.NewTable(*a...).Set(func(t Attribute) (identity string) { return t.NodeId }, attrs...)
 	*a = Attributes(tmp)
 }
 
