@@ -1,4 +1,4 @@
-package htmlenhance
+package htmlcomponent
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/antchfx/htmlquery"
+	"github.com/suifengpiao14/htmltemplate/htmlenhance"
 	"github.com/suifengpiao14/memorytable"
 )
 
@@ -37,7 +38,7 @@ type Attributes []Attribute
 func (as Attributes) MapData() (attrMap map[string]any) {
 	attrMap = make(map[string]any)
 	for _, a := range as {
-		attrMap[AttrPlaceholderName(a.NodeId)] = as.GetByNodeKey(a.NodeId).String()
+		attrMap[htmlenhance.AttrPlaceholderName(a.NodeId)] = as.GetByNodeKey(a.NodeId).String()
 	}
 	return attrMap
 }
@@ -129,7 +130,7 @@ func (a Attributes) String() string {
 
 func ParseAttributes(attrString string) (attrs Attributes, err error) {
 	div := fmt.Sprintf("<div %s></div>", attrString)
-	root, _, err := parseHTML(div)
+	root, _, err := htmlenhance.ParseHTML(div)
 	if err != nil {
 		return nil, err
 	}

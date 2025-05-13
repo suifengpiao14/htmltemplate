@@ -13,7 +13,7 @@ import (
 使用场景：动态渲染html模板后，使用该函数整理html class 确保多次设置的class能都生效
 */
 func MergeClassAttrs(htmlStr string) (string, error) {
-	root, isFullHTMLDocument, err := parseHTML(htmlStr)
+	root, isFullHTMLDocument, err := ParseHTML(htmlStr)
 	if err != nil {
 		return "", err
 	}

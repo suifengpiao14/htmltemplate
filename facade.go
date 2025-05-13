@@ -11,3 +11,5 @@ var MergeClassAttrs = htmlenhance.MergeClassAttrs
 type Component = htmlcomponent.Component
 type Assemble = htmlcomponent.Assemble
 type Assembles = htmlcomponent.Assembles
+type Attribute = htmlcomponent.Attribute
+type Attributes = htmlcomponent.Attributes

@@ -19,7 +19,7 @@ import (
 */
 
 const (
-	dataNodeKeyAttr    = "data-node-key"
+	DataNodeKeyAttr    = "data-node-key"
 	attrPlaceholderFmt = "%sAttrs"
 	ignoredTagScript   = "script"
 )
@@ -34,7 +34,7 @@ func SetNodeIdAndAttrHolder(tpl string) (string, error) {
 	if tpl == "" {
 		return "", nil
 	}
-	root, isFullHTMLDocument, err := parseHTML(tpl)
+	root, isFullHTMLDocument, err := ParseHTML(tpl)
 	if err != nil {
 		return "", errors.WithMessagef(err, "failed to parse template")
 	}
@@ -46,13 +46,13 @@ func SetNodeIdAndAttrHolder(tpl string) (string, error) {
 		}
 
 		// 跳过已有 data-node-key 的节点
-		if getAttrValue(node, dataNodeKeyAttr) != "" {
+		if getAttrValue(node, DataNodeKeyAttr) != "" {
 			continue
 		}
 
 		// 设置唯一 node-key
 		nodeKey := uuidWithoutDash()
-		setAttr(node, dataNodeKeyAttr, nodeKey)
+		setAttr(node, DataNodeKeyAttr, nodeKey)
 
 		// 添加动态属性占位符（Key = {{nodeKeyAttrs}}）
 		placeholder := AttrPlaceholderName(nodeKey)
@@ -72,8 +72,8 @@ func isFullHTMLDocument(htmlStr string) bool {
 	return strings.HasPrefix(htmlStr, "<!doctype") || strings.Contains(htmlStr, "<html")
 }
 
-// parseHTML 将模板片段 包裹在 div 中，便于解析多根节点模板
-func parseHTML(tpl string) (root *html.Node, isFullHtmlDoc bool, err error) {
+// ParseHTML 将模板片段 包裹在 div 中，便于解析多根节点模板
+func ParseHTML(tpl string) (root *html.Node, isFullHtmlDoc bool, err error) {
 	isFullHtmlDoc = isFullHTMLDocument(tpl)
 	if isFullHtmlDoc {
 		root, err = htmlquery.Parse(strings.NewReader(tpl))
