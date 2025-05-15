@@ -12,7 +12,7 @@ type RootComponent struct {
 	Attributes Attributes
 }
 
-func NewHtmlPage(name string, assembles Assembles, components Components, attributes Attributes) *RootComponent {
+func NewRootComponent(name string, assembles Assembles, components Components, attributes Attributes) *RootComponent {
 	return &RootComponent{
 		Name:       name,
 		Assembles:  assembles,
