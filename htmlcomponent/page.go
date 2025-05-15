@@ -5,15 +5,15 @@ import (
 	"github.com/spf13/cast"
 )
 
-type HtmlPage struct {
+type RootComponent struct {
 	Name       string
 	Assembles  Assembles
 	Components Components
 	Attributes Attributes
 }
 
-func NewHtmlPage(name string, assembles Assembles, components Components, attributes Attributes) *HtmlPage {
-	return &HtmlPage{
+func NewHtmlPage(name string, assembles Assembles, components Components, attributes Attributes) *RootComponent {
+	return &RootComponent{
 		Name:       name,
 		Assembles:  assembles,
 		Components: components,
@@ -21,7 +21,7 @@ func NewHtmlPage(name string, assembles Assembles, components Components, attrib
 	}
 }
 
-func (p HtmlPage) ToHtml(data map[string]any) (pageHtml string, err error) {
+func (p RootComponent) ToHtml(data map[string]any) (rootComponentHtml string, err error) {
 	rootComponentName := p.Name
 	assembles := p.Assembles
 	components := p.Components
@@ -40,6 +40,6 @@ func (p HtmlPage) ToHtml(data map[string]any) (pageHtml string, err error) {
 		return "", err
 	}
 	val := variables[first.GetOutputKey()]
-	pageHtml = cast.ToString(val)
-	return pageHtml, nil
+	rootComponentHtml = cast.ToString(val)
+	return rootComponentHtml, nil
 }
