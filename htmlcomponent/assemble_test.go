@@ -13,9 +13,9 @@ var allComponent = htmlcomponent.AllComponent
 var xyxzApiIndexAssembles = htmlcomponent.Assembles{
 
 	{
-		PageName:      "xyxzapi/index",
-		ComponentName: "xyxzapi/orderListItem",
-		AssembleName:  "arriveShop_OrderItems",
+		RootComponentName: "xyxzapi/index",
+		ComponentName:     "xyxzapi/orderListItem",
+		AssembleName:      "arriveShop_OrderItems",
 		DataTpl: `{
 		"namespace":"arriveShop",
 		"orders":[{
@@ -43,9 +43,9 @@ var xyxzApiIndexAssembles = htmlcomponent.Assembles{
 		]}`, // 这里用的是上面定义的orderTypeTab的变量
 	},
 	{
-		PageName:      "xyxzapi/index",
-		ComponentName: "xyxzapi/orderListItem",
-		AssembleName:  "arriveHome_orderItems",
+		RootComponentName: "xyxzapi/index",
+		ComponentName:     "xyxzapi/orderListItem",
+		AssembleName:      "arriveHome_orderItems",
 		DataTpl: `{
 		"namespace":"arriveHome",
 		"orders":[{
@@ -73,30 +73,30 @@ var xyxzApiIndexAssembles = htmlcomponent.Assembles{
 		]}`, // 这里用的是上面定义的orderTypeTab的变量
 	},
 	{
-		PageName:      "xyxzapi/index",
-		ComponentName: "suifengpiao14/container",
-		AssembleName:  "arriveShopContent",
+		RootComponentName: "xyxzapi/index",
+		ComponentName:     "suifengpiao14/container",
+		AssembleName:      "arriveShopContent",
 		DataTpl: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveShop_OrderItemsOutput}}}"]
 		}`,
 	},
 	{
-		PageName:      "xyxzapi/index",
-		ComponentName: "suifengpiao14/container",
-		AssembleName:  "arriveHomeContent",
+		RootComponentName: "xyxzapi/index",
+		ComponentName:     "suifengpiao14/container",
+		AssembleName:      "arriveHomeContent",
 		DataTpl: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveHome_orderItemsOutput}}}"]
 		}`,
 	},
 	{
-		PageName:      "xyxzapi/index",
-		ComponentName: "xyxzapi/orderToolbar",
-		AssembleName:  "toolbar",
+		RootComponentName: "xyxzapi/index",
+		ComponentName:     "xyxzapi/orderToolbar",
+		AssembleName:      "toolbar",
 	},
 	{
-		PageName:      "xyxzapi/index",
-		ComponentName: "suifengpiao14/tab",
-		AssembleName:  "orderTypeTab",
+		RootComponentName: "xyxzapi/index",
+		ComponentName:     "suifengpiao14/tab",
+		AssembleName:      "orderTypeTab",
 		DataTpl: `{
 				"namespace":"orderTypeTab",
 				"eventName":"",
@@ -108,9 +108,9 @@ var xyxzApiIndexAssembles = htmlcomponent.Assembles{
 	}`,
 	},
 	{
-		PageName:      "xyxzapi/index",
-		ComponentName: "xyxzapi/index",
-		AssembleName:  "index",
+		RootComponentName: "xyxzapi/index",
+		ComponentName:     "xyxzapi/index",
+		AssembleName:      "index",
 		DataTpl: `{
 	"orderTypeTab":"{{{orderTypeTabOutput}}}"
 	}`,
@@ -118,8 +118,8 @@ var xyxzApiIndexAssembles = htmlcomponent.Assembles{
 }
 
 func TestPage(t *testing.T) {
-	pageName := "xyxzapi/index"
-	as := xyxzApiIndexAssembles.FilterByPageName(pageName)
+	rootComponentName := "xyxzapi/index"
+	as := xyxzApiIndexAssembles.FilterByRootComponentName(rootComponentName)
 	allData := map[string]any{
 		"arriveHome_orderItemsInput": map[string]any{
 			"namespace": "arriveHome_from_data",
@@ -163,20 +163,20 @@ func TestGetDependence(t *testing.T) {
 }
 
 func TestRanderTable(t *testing.T) {
-	pageName := "html/component"
+	rootComponentName := "html/component"
 	var TestHtmlComponentIndexAssembles = htmlcomponent.Assembles{
 		{
-			PageName:      "html/component",
-			ComponentName: "suifengpiao14/table",
-			AssembleName:  "table",
+			RootComponentName: "html/component",
+			ComponentName:     "suifengpiao14/table",
+			AssembleName:      "table",
 		},
 		{
-			PageName:      "test/htmlComponent",
-			ComponentName: "suifengpiao14/tab",
+			RootComponentName: "test/htmlComponent",
+			ComponentName:     "suifengpiao14/tab",
 		},
 	}
 
-	as := TestHtmlComponentIndexAssembles.FilterByPageName(pageName)
+	as := TestHtmlComponentIndexAssembles.FilterByRootComponentName(rootComponentName)
 	data := rows2TableData()
 	rowsMap := funcs.Struct2JsonMap(data)
 	allData := map[string]any{
@@ -198,9 +198,9 @@ func TestRanderSubPage(t *testing.T) {
 
 	var TestHtmlComponentIndexAssembles = htmlcomponent.Assembles{
 		{
-			PageName:      "html/component",
-			ComponentName: "suifengpiao14/table",
-			AssembleName:  "table",
+			RootComponentName: "html/component",
+			ComponentName:     "suifengpiao14/table",
+			AssembleName:      "table",
 			DataTpl: `
 			<headers>
 			<column>name</column>
@@ -242,13 +242,13 @@ func TestRanderSubPage(t *testing.T) {
 			`,
 		},
 		{
-			PageName:      "test/htmlComponent",
-			ComponentName: "suifengpiao14/tab",
+			RootComponentName: "test/htmlComponent",
+			ComponentName:     "suifengpiao14/tab",
 		},
 	}
 
-	pageName := "html/component"
-	as := TestHtmlComponentIndexAssembles.FilterByPageName(pageName)
+	rootComponentName := "html/component"
+	as := TestHtmlComponentIndexAssembles.FilterByRootComponentName(rootComponentName)
 	tableDataMap := map[string]any{
 		"items": []map[string]any{
 			{

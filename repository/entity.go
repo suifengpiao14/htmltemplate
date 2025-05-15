@@ -1,16 +1,16 @@
 package repository
 
 type Component interface {
-	Name() string
-	Template() string
-	DataTpl() string
+	GetName() string
+	GetTemplate() string
+	GetDataTpl() string
 }
 
 type Assemble interface {
-	PageName() string
-	ComponentName() string
-	AssembleName() string
-	DataTpl() string
+	GetRootComponentName() string
+	GetComponentName() string
+	GetAssembleName() string
+	GetDataTpl() string
 }
 type Attribute interface {
 	GetNodeId() string

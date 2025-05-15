@@ -22,7 +22,7 @@ func NewHtmlPage(name string, assembles Assembles, components Components, attrib
 }
 
 func (p HtmlPage) ToHtml(data map[string]any) (pageHtml string, err error) {
-	pageName := p.Name
+	rootComponentName := p.Name
 	assembles := p.Assembles
 	components := p.Components
 
@@ -33,10 +33,10 @@ func (p HtmlPage) ToHtml(data map[string]any) (pageHtml string, err error) {
 		return "", err
 	}
 
-	rootAssembles := assembles.GetByComponentName(pageName)
+	rootAssembles := assembles.GetByComponentName(rootComponentName)
 	first, err := rootAssembles.First()
 	if err != nil {
-		err = errors.WithMessagef(err, "componentName(same as pageName):%s", pageName)
+		err = errors.WithMessagef(err, "componentName(same as rootComponentName):%s", rootComponentName)
 		return "", err
 	}
 	val := variables[first.GetOutputKey()]

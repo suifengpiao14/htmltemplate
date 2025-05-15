@@ -12,12 +12,12 @@ import (
 
 type Assemble struct {
 	//	ID            string   `json:"id"`
-	PageName      string   `json:"pageName"`
-	ComponentName string   `json:"componentName"`
-	AssembleName  string   `json:"assembleName"`
-	DataTpl       string   `json:"dataTpl"`
-	DataExample   string   `json:"dataExample"`
-	dependences   []string //依赖组件(所有的input key)
+	RootComponentName string   `json:"rootComponentName"`
+	ComponentName     string   `json:"componentName"`
+	AssembleName      string   `json:"assembleName"`
+	DataTpl           string   `json:"dataTpl"`
+	DataExample       string   `json:"dataExample"`
+	dependences       []string //依赖组件(所有的input key)
 
 }
 
@@ -109,9 +109,9 @@ func (as Assembles) First() (assemble Assemble, err error) {
 
 }
 
-func (as Assembles) FilterByPageName(PageName string) (onePageAssembles Assembles) {
+func (as Assembles) FilterByRootComponentName(RootComponentName string) (onePageAssembles Assembles) {
 	rows := memorytable.NewTable(as...).Where(func(a Assemble) bool {
-		return a.PageName == PageName
+		return a.RootComponentName == RootComponentName
 	}).ToSlice()
 	return rows
 }

@@ -40,21 +40,21 @@ func NewHtmlTemplateService[C Component, A Assemble, R Attribute](repoComponent 
 	}
 }
 
-func (s HtmlTemplateService[C, A, R]) GetHtmlPage(pageName string) (htmlPage htmlcomponent.HtmlPage, err error) {
-	assembles, err := s._GetAssemblesByPageName(pageName)
+func (s HtmlTemplateService[C, A, R]) GetHtmlPage(rootComponentName string) (htmlPage htmlcomponent.HtmlPage, err error) {
+	assembles, err := s._GetAssemblesByRootComponentName(rootComponentName)
 	if err != nil {
 		return htmlPage, err
 	}
 	htmlPage.Assembles = assembles
 	componentNames := assembles.ComponentNames()
-	componentNames = append(componentNames, pageName)
+	componentNames = append(componentNames, rootComponentName)
 	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
 	components, err := s._GetComponentByComponentNames(componentNames)
 	if err != nil {
 		return htmlPage, err
 	}
 	htmlPage.Components = components
-	attrs, err := s._GetAttributesByPageName(pageName)
+	attrs, err := s._GetAttributesByRootComponentName(rootComponentName)
 	if err != nil {
 		return htmlPage, err
 	}
@@ -62,8 +62,8 @@ func (s HtmlTemplateService[C, A, R]) GetHtmlPage(pageName string) (htmlPage htm
 	return htmlPage, nil
 }
 
-func (s HtmlTemplateService[C, A, R]) _GetAssemblesByPageName(pageName string) (assembles htmlcomponent.Assembles, err error) {
-	assembles, err = s.assembleService._GetByPageName(pageName)
+func (s HtmlTemplateService[C, A, R]) _GetAssemblesByRootComponentName(rootComponentName string) (assembles htmlcomponent.Assembles, err error) {
+	assembles, err = s.assembleService._GetByRootComponentName(rootComponentName)
 	if err != nil {
 		return nil, err
 	}
@@ -77,39 +77,39 @@ func (s HtmlTemplateService[C, A, R]) _GetComponentByComponentNames(componentNam
 	return components, nil
 }
 
-func (s HtmlTemplateService[C, A, R]) _GetAttributesByPageName(pageName string) (assembles htmlcomponent.Attributes, err error) {
-	assembles, err = s.attributeService._GetByPageName(pageName)
+func (s HtmlTemplateService[C, A, R]) _GetAttributesByRootComponentName(rootComponentName string) (assembles htmlcomponent.Attributes, err error) {
+	assembles, err = s.attributeService._GetByRootComponentName(rootComponentName)
 	if err != nil {
 		return nil, err
 	}
 	return assembles, nil
 }
 
-func (s _AssembleService[A]) _GetByPageName(pageName string) (assembles htmlcomponent.Assembles, err error) {
-	if pageName == "" {
+func (s _AssembleService[A]) _GetByRootComponentName(rootComponentName string) (assembles htmlcomponent.Assembles, err error) {
+	if rootComponentName == "" {
 		return assembles, nil
 	}
-	assembleModels, err := s.repo.GetByPageName(pageName)
+	assembleModels, err := s.repo.GetByRootComponentName(rootComponentName)
 	if err != nil {
 		return nil, err
 	}
 	for _, assembleModel := range assembleModels {
 		assemble := htmlcomponent.Assemble{
-			PageName:      assembleModel.PageName(),
-			ComponentName: assembleModel.ComponentName(),
-			AssembleName:  assembleModel.AssembleName(),
-			DataTpl:       assembleModel.DataTpl(),
+			RootComponentName: assembleModel.GetRootComponentName(),
+			ComponentName:     assembleModel.GetComponentName(),
+			AssembleName:      assembleModel.GetAssembleName(),
+			DataTpl:           assembleModel.GetDataTpl(),
 		}
 		assembles = append(assembles, assemble)
 	}
 	return assembles, nil
 }
 
-func (s _AttributeService[R]) _GetByPageName(pageName string) (attributes htmlcomponent.Attributes, err error) {
-	if pageName == "" {
+func (s _AttributeService[R]) _GetByRootComponentName(rootComponentName string) (attributes htmlcomponent.Attributes, err error) {
+	if rootComponentName == "" {
 		return attributes, nil
 	}
-	attrModels, err := s.repo.GetByPageName(pageName)
+	attrModels, err := s.repo.GetByRootComponentName(rootComponentName)
 	if err != nil {
 		return nil, err
 	}
@@ -135,9 +135,9 @@ func (s _ComponentSerivce[C]) _GetByComponentNames(componentNames []string) (com
 
 	for _, componentModel := range componentModels {
 		component := htmlcomponent.Component{
-			Name:     componentModel.Name(),
-			Template: componentModel.Template(),
-			DataTpl:  componentModel.DataTpl(),
+			Name:     componentModel.GetName(),
+			Template: componentModel.GetTemplate(),
+			DataTpl:  componentModel.GetDataTpl(),
 		}
 		components = append(components, component)
 	}

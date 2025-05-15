@@ -19,12 +19,12 @@ type Attributes = htmlcomponent.Attributes
 // HtmlTemplateService 外部调用,必须在初始化时赋值
 var HtmlTemplateService *repository.HtmlTemplateService[repository.Component, repository.Assemble, repository.Attribute]
 
-func PageHtml(pageName string, data map[string]any) (pageHtml string, err error) {
+func PageHtml(rootComponentName string, data map[string]any) (pageHtml string, err error) {
 	if HtmlTemplateService == nil {
 		err = errors.Errorf("HtmlTemplateService uninitialized")
 		return "", err
 	}
-	htmlPage, err := HtmlTemplateService.GetHtmlPage(pageName)
+	htmlPage, err := HtmlTemplateService.GetHtmlPage(rootComponentName)
 	if err != nil {
 		return "", err
 	}
