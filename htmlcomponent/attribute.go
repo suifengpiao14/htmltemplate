@@ -19,9 +19,9 @@ import (
 type Attribute struct {
 	NodeId string `json:"nodeId"`
 	Key    string `json:"key"`
-	Title  string `json:"title"`
-	Value  string `json:"value"`
-	sort   int    `json:"-"`
+	//Title  string `json:"title"`
+	Value string `json:"value"`
+	sort  int    `json:"-"`
 }
 
 func (a Attribute) String() string {

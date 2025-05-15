@@ -9,11 +9,10 @@ import (
 )
 
 type Component struct {
-	Name        string            `json:"name"`
-	Template    string            `json:"template"`
-	DataTpl     string            `json:"dataTpl"`
-	ClassMap    map[string]string `json:"classMap"`
-	DataExample string            `json:"dataExample"` // 示例数据，用于调试
+	Name        string `json:"name"`
+	Template    string `json:"template"`
+	DataTpl     string `json:"dataTpl"`
+	DataExample string `json:"dataExample"` // 示例数据，用于调试
 
 }
 

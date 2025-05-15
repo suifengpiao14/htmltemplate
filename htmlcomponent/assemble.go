@@ -11,7 +11,7 @@ import (
 )
 
 type Assemble struct {
-	ID            string   `json:"id"`
+	//	ID            string   `json:"id"`
 	PageName      string   `json:"pageName"`
 	ComponentName string   `json:"componentName"`
 	AssembleName  string   `json:"assembleName"`
@@ -98,6 +98,17 @@ func (r Assemble) GetDependence() (dependences []string) {
 
 type Assembles []Assemble
 
+var Error_not_found = errors.New("not found")
+
+func (as Assembles) First() (assemble Assemble, err error) {
+	if len(as) == 0 {
+		return assemble, Error_not_found
+	}
+	assemble = as[0]
+	return assemble, Error_not_found
+
+}
+
 func (as Assembles) FilterByPageName(PageName string) (onePageAssembles Assembles) {
 	rows := memorytable.NewTable(as...).Where(func(a Assemble) bool {
 		return a.PageName == PageName
@@ -125,6 +136,17 @@ func (as Assembles) GetByAssembleName(assembleName string) (assemble *Assemble, 
 		}
 	}
 	return nil, -1
+}
+
+func (as Assembles) ComponentNames() (componentNames []string) {
+	componentNames = make([]string, 0)
+	for _, a := range as {
+		componentNames = append(componentNames, a.ComponentName)
+	}
+	componentNames = memorytable.NewTable(componentNames...).FilterEmpty().Uniqueue(func(row string) (key string) {
+		return row
+	})
+	return componentNames
 }
 
 func (as *Assembles) Insert(a Assemble, index int) {
