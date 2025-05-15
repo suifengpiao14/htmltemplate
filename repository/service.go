@@ -40,21 +40,21 @@ func NewHtmlTemplateService[C Component, A Assemble, R Attribute](repoComponent 
 	}
 }
 
-func (s HtmlTemplateService[C, A, R]) GetRootComponent(rootComponentName string) (rootComponent htmlcomponent.RootComponent, err error) {
-	assembles, err := s._GetAssemblesByRootComponentName(rootComponentName)
+func (s HtmlTemplateService[C, A, R]) GetComponent(componentName string) (rootComponent htmlcomponent.RootComponent, err error) {
+	assembles, err := s._GetAssemblesByRootComponentName(componentName)
 	if err != nil {
 		return rootComponent, err
 	}
 	rootComponent.Assembles = assembles
 	componentNames := assembles.ComponentNames()
-	componentNames = append(componentNames, rootComponentName)
+	componentNames = append(componentNames, componentName)
 	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
 	components, err := s._GetComponentByComponentNames(componentNames)
 	if err != nil {
 		return rootComponent, err
 	}
 	rootComponent.Components = components
-	attrs, err := s._GetAttributesByRootComponentName(rootComponentName)
+	attrs, err := s._GetAttributesByRootComponentName(componentName)
 	if err != nil {
 		return rootComponent, err
 	}

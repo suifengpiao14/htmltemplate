@@ -24,7 +24,7 @@ func PageHtml(rootComponentName string, data map[string]any) (rootComponentHtml 
 		err = errors.Errorf("HtmlTemplateService uninitialized")
 		return "", err
 	}
-	rootComponent, err := HtmlTemplateService.GetRootComponent(rootComponentName)
+	rootComponent, err := HtmlTemplateService.GetComponent(rootComponentName)
 	if err != nil {
 		return "", err
 	}
