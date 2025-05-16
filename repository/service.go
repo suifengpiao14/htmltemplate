@@ -3,22 +3,10 @@ package repository
 import (
 	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
 	"github.com/suifengpiao14/memorytable"
-	"github.com/suifengpiao14/sqlbuilder"
 )
 
 type _ComponentSerivce[C Component] struct {
-	repo        RepoComponent[C] // 依赖数据接口
-	repoCommand sqlbuilder.RepositoryCommand
-	repoQuery   sqlbuilder.RepositoryQuery[C]
-}
-
-func newComponentService[C Component](repo RepoComponent[C], tableConfig sqlbuilder.TableConfig) _ComponentSerivce[C] {
-	repoCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return _ComponentSerivce[C]{
-		repo:        repo,
-		repoQuery:   sqlbuilder.NewRepositoryQuery[C](tableConfig),
-		repoCommand: repoCommand,
-	}
+	repo RepoComponent[C] // 依赖数据接口
 }
 
 type _AssembleService[A Assemble] struct {
@@ -72,10 +60,6 @@ func (s HtmlTemplateService[C, A, R]) GetComponent(componentName string) (rootCo
 	}
 	rootComponent.Attributes = attrs
 	return rootComponent, nil
-}
-
-func (s HtmlTemplateService[C, A, R]) AddComponent(component Component) error {
-	return s.componentService._AddComponent(component)
 }
 
 func (s HtmlTemplateService[C, A, R]) _GetAssemblesByRootComponentName(rootComponentName string) (assembles htmlcomponent.Assembles, err error) {
@@ -158,8 +142,4 @@ func (s _ComponentSerivce[C]) _GetByComponentNames(componentNames []string) (com
 		components = append(components, component)
 	}
 	return components, nil
-}
-
-func (s _ComponentSerivce[C]) _AddComponent(component Component) error {
-	return s.repoCommand.Insert(component)
 }
