@@ -1,4 +1,4 @@
-package repository
+package htmlrepository
 
 type Component interface {
 	GetName() string

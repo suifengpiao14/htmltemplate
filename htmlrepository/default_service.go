@@ -1,4 +1,4 @@
-package repository
+package htmlrepository
 
 import (
 	"context"
@@ -8,9 +8,23 @@ import (
 	"github.com/suifengpiao14/sqlbuilder"
 )
 
+func NewHtmlTemplateServiceByDefaultService[C Component, A Assemble, R Attribute](tableConfig TableConfig) *HtmlTemplateService[C, A, R] {
+	return nil
+
+}
+
 type ComponentSerivce[C Component] struct {
 	repositoryQuery   sqlbuilder.RepositoryQuery[C]
 	repositoryCommand sqlbuilder.RepositoryCommand
+}
+
+func NewComponentSerivce[C Component](tableConfig sqlbuilder.TableConfig) ComponentSerivce[C] {
+	repositoryQuery := sqlbuilder.NewRepositoryQuery[C](tableConfig)
+	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
+	return ComponentSerivce[C]{
+		repositoryQuery:   repositoryQuery,
+		repositoryCommand: repositoryCommand,
+	}
 }
 
 func (s ComponentSerivce[C]) Set(c C, customFn sqlbuilder.CustomFnSetParam) (err error) {
@@ -37,6 +51,15 @@ type AssembleService[A Assemble] struct {
 	repositoryCommand sqlbuilder.RepositoryCommand
 }
 
+func NewAssembleService[A Assemble](tableConfig sqlbuilder.TableConfig) AssembleService[A] {
+	repositoryQuery := sqlbuilder.NewRepositoryQuery[A](tableConfig)
+	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
+	return AssembleService[A]{
+		repositoryQuery:   repositoryQuery,
+		repositoryCommand: repositoryCommand,
+	}
+}
+
 func (s AssembleService[A]) Set(assemble A, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewRootComponentNameField(assemble.GetRootComponentName()).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
@@ -50,7 +73,7 @@ func (s AssembleService[A]) Set(assemble A, customFn sqlbuilder.CustomFnSetParam
 	}
 	return nil
 }
-func (s AssembleService[A]) GetByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
+func (s AssembleService[A]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
 	fields := sqlbuilder.Fields{
 		NewRootComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
@@ -84,6 +107,15 @@ type AttributeService[R Attribute] struct {
 	repositoryCommand sqlbuilder.RepositoryCommand
 }
 
+func NewAttributeService[R Attribute](tableConfig sqlbuilder.TableConfig) AttributeService[R] {
+	repositoryQuery := sqlbuilder.NewRepositoryQuery[R](tableConfig)
+	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
+	return AttributeService[R]{
+		repositoryQuery:   repositoryQuery,
+		repositoryCommand: repositoryCommand,
+	}
+}
+
 func (s AttributeService[R]) Set(attribute R, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewNodeIdField(attribute.GetNodeId()).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
@@ -97,7 +129,7 @@ func (s AttributeService[R]) Set(attribute R, customFn sqlbuilder.CustomFnSetPar
 	return nil
 }
 
-func (s AttributeService[R]) GetByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
+func (s AttributeService[R]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
 	fields := sqlbuilder.Fields{
 		NewRootComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
@@ -150,45 +182,16 @@ func (c TableConfig) AddIndex() TableConfig {
 	return c
 }
 
-type HtmlTemplateDefaultService[C Component, A Assemble, R Attribute] struct {
-	componentService ComponentSerivce[C]
-	assembleService  AssembleService[A]
-	attributeService AttributeService[R]
-}
-
-func NewHtmlTemplateDefaultService[C Component, A Assemble, R Attribute](tableConfig TableConfig) *HtmlTemplateDefaultService[C, A, R] {
-	tableConfig = tableConfig.AddIndex()
-	componentService := ComponentSerivce[C]{
-		repositoryQuery:   sqlbuilder.NewRepositoryQuery[C](tableConfig.Component),
-		repositoryCommand: sqlbuilder.NewRepositoryCommand(tableConfig.Component),
-	}
-
-	assembleService := AssembleService[A]{
-		repositoryQuery: sqlbuilder.NewRepositoryQuery[A](tableConfig.Assemble),
-
-		repositoryCommand: sqlbuilder.NewRepositoryCommand(tableConfig.Assemble),
-	}
-	attributeService := AttributeService[R]{
-		repositoryQuery:   sqlbuilder.NewRepositoryQuery[R](tableConfig.Attribute),
-		repositoryCommand: sqlbuilder.NewRepositoryCommand(tableConfig.Attribute),
-	}
-	return &HtmlTemplateDefaultService[C, A, R]{
-		componentService: componentService,
-		assembleService:  assembleService,
-		attributeService: attributeService,
-	}
-}
-
-func (s HtmlTemplateDefaultService[C, A, R]) ListByComponentNames(componentNames []string) ([]C, error) {
+func (s HtmlTemplateService[C, A, R]) ListByComponentNames(componentNames []string) ([]C, error) {
 
 	return s.componentService.ListByComponentNames(componentNames)
 }
 
-func (s HtmlTemplateDefaultService[C, A, R]) ComponentSet(c C, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s HtmlTemplateService[C, A, R]) ComponentSet(c C, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	return s.componentService.Set(c, customFn)
 }
 
-func (s HtmlTemplateDefaultService[C, A, R]) ComponentPagination(pageIndex, pageSize int, customFn sqlbuilder.CustomFnPaginationParam) (models []C, total int64, err error) {
+func (s HtmlTemplateService[C, A, R]) ComponentPagination(pageIndex, pageSize int, customFn sqlbuilder.CustomFnPaginationParam) (models []C, total int64, err error) {
 	fields := sqlbuilder.Fields{
 		commonlanguage.NewPageIndex(pageIndex),
 		commonlanguage.NewPageSize(pageSize),
@@ -197,28 +200,28 @@ func (s HtmlTemplateDefaultService[C, A, R]) ComponentPagination(pageIndex, page
 	return s.componentService.repositoryQuery.Pagination(fields, customFn)
 }
 
-func (s HtmlTemplateDefaultService[C, A, R]) AssembleSet(assemble A, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s HtmlTemplateService[C, A, R]) AssembleSet(assemble A, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	return s.assembleService.Set(assemble, customFn)
 }
 
-func (s HtmlTemplateDefaultService[C, A, R]) AssembleGetAllByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) ([]A, error) {
+func (s HtmlTemplateService[C, A, R]) AssembleGetAllByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) ([]A, error) {
 
-	return s.assembleService.GetByRootComponentName(rootComponentName, customFn)
+	return s.assembleService.ListByRootComponentName(rootComponentName, customFn)
 }
-func (s HtmlTemplateDefaultService[C, A, R]) AssembleDelete(assemble A, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s HtmlTemplateService[C, A, R]) AssembleDelete(assemble A, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 
 	return s.assembleService.Delete(assemble, customFn)
 }
 
-func (s HtmlTemplateDefaultService[C, A, R]) AttributeSet(attribute R, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s HtmlTemplateService[C, A, R]) AttributeSet(attribute R, customFn sqlbuilder.CustomFnSetParam) (err error) {
 
 	return s.attributeService.Set(attribute, customFn)
 }
 
-func (s HtmlTemplateDefaultService[C, A, R]) AttributeGetAllByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
-	return s.attributeService.GetByRootComponentName(rootComponentName, customFn)
+func (s HtmlTemplateService[C, A, R]) AttributeGetAllByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
+	return s.attributeService.ListByRootComponentName(rootComponentName, customFn)
 }
-func (s HtmlTemplateDefaultService[C, A, R]) AttributeDelete(attribute R, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s HtmlTemplateService[C, A, R]) AttributeDelete(attribute R, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 
 	return s.attributeService.Delete(attribute, customFn)
 }

@@ -1,4 +1,4 @@
-package repository
+package htmlrepository
 
 import "github.com/suifengpiao14/sqlbuilder"
 
