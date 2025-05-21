@@ -116,8 +116,8 @@ func (s _AttributeService[R]) _GetByRootComponentName(rootComponentName string) 
 	for _, attrModel := range attrModels {
 		attribute := htmlcomponent.Attribute{
 			NodeId: attrModel.GetNodeId(),
-			Key:    attrModel.GetKey(),
-			Value:  attrModel.GetValue(),
+			Key:    attrModel.GetAttributeName(),
+			Value:  attrModel.GetAttributeValue(),
 		}
 		attributes = append(attributes, attribute)
 	}

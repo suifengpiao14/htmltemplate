@@ -14,6 +14,6 @@ type Assemble interface {
 }
 type Attribute interface {
 	GetNodeId() string
-	GetKey() string
-	GetValue() string
+	GetAttributeName() string
+	GetAttributeValue() string
 }
