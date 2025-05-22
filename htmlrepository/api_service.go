@@ -65,6 +65,7 @@ func (s HtmlTemplateService[C, A, R]) GetComponent(componentRootName string) (ro
 	if err != nil {
 		return rootComponent, err
 	}
+	rootComponent.Name = componentRootName
 	rootComponent.Attributes = attrs
 	return rootComponent, nil
 }

@@ -105,7 +105,7 @@ func (as Assembles) First() (assemble Assemble, err error) {
 		return assemble, Error_not_found
 	}
 	assemble = as[0]
-	return assemble, Error_not_found
+	return assemble, nil
 
 }
 
