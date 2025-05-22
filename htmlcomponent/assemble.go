@@ -207,7 +207,7 @@ func (as Assembles) RenderComponent(cs Components, data map[string]any) (segment
 		}
 		html, err := c.Render(templateData)
 		if err != nil {
-			return nil, errors.WithMessagef(err, "render component %s error", c.Name)
+			return nil, errors.WithMessagef(err, "render component %s error", c.ComponentName)
 		}
 		segments[r.GetOutputKey()] = html
 	}

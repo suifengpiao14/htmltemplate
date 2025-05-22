@@ -2,7 +2,6 @@ package htmlrepository
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/pkg/errors"
@@ -45,7 +44,7 @@ func (s ComponentSerivce[C]) Set(c C, customFn sqlbuilder.CustomFnSetParam) (err
 	}
 	return nil
 }
-func (s ComponentSerivce[C]) ListByComponentNames(componentNames []string) (models []C, err error) {
+func (s ComponentSerivce[C]) ListByComponentNames(componentNames []string) (models htmlcomponent.Components, err error) {
 	fields := sqlbuilder.Fields{
 		NewComponentNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward).Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 			f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
@@ -62,12 +61,10 @@ func (s ComponentSerivce[C]) ListByComponentNames(componentNames []string) (mode
 
 		}),
 	}
-	modelsAny, err := s.repositoryQueryAny.All(fields, nil)
+	models, err = s.repositoryQueryAny.All(fields, nil)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Sprintln(modelsAny)
-
 	return models, nil
 }
 
@@ -189,8 +186,7 @@ type TableConfig struct {
 	Attribute sqlbuilder.TableConfig
 }
 
-func (s HtmlTemplateService[C, A, R]) ListByComponentNames(componentNames []string) ([]C, error) {
-
+func (s HtmlTemplateService[C, A, R]) ListByComponentNames(componentNames []string) (components htmlcomponent.Components, err error) {
 	return s.componentService.ListByComponentNames(componentNames)
 }
 

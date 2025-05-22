@@ -9,11 +9,10 @@ import (
 )
 
 type Component struct {
-	Name        string `json:"name"`
-	Template    string `json:"template"`
-	DataTpl     string `json:"dataTpl"`
-	DataExample string `json:"dataExample"` // 示例数据，用于调试
-
+	ComponentName string `gorm:"column:componentName" json:"componentName"`
+	Template      string `gorm:"column:template" json:"template"`
+	DataTpl       string `gorm:"column:dataTpl" json:"dataTpl"`
+	DataExample   string `gorm:"column:dataExample" json:"dataExample"` // 示例数据，用于调试
 }
 
 func (c Component) Render(data map[string]any) (html string, err error) {
@@ -45,7 +44,7 @@ type Components []Component
 
 func (cs Components) GetByName(name string) (c *Component, ok bool) {
 	for _, c := range cs {
-		if strings.EqualFold(c.Name, name) {
+		if strings.EqualFold(c.ComponentName, name) {
 			return &c, true
 		}
 	}

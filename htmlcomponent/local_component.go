@@ -8,7 +8,7 @@ import (
 )
 
 var XyxzapiPageIndex = Component{
-	Name: "xyxzapi/index",
+	ComponentName: "xyxzapi/index",
 	Template: `
 		<div class="flex flex-col w-full ">
 		背景色-黄色
@@ -20,7 +20,7 @@ var XyxzapiPageIndex = Component{
 }
 
 var XyxzOrderToolbar = Component{
-	Name: "xyxzapi/orderToolbar",
+	ComponentName: "xyxzapi/orderToolbar",
 	Template: `
 <div class="flex flex-row w-full ">
 <div>手动建单</div>
@@ -33,7 +33,7 @@ var XyxzOrderToolbar = Component{
 }
 
 var Container = Component{
-	Name: "suifengpiao14/container",
+	ComponentName: "suifengpiao14/container",
 	Template: `
 	<div>
 	{{#children}}
@@ -51,7 +51,7 @@ var Container = Component{
 }
 
 var XyxzOrderListItem = Component{
-	Name: "xyxzapi/orderListItem",
+	ComponentName: "xyxzapi/orderListItem",
 	Template: `
 	{{#orders}}
 	<div data-fullname="{{namespace}}/orders-item">
@@ -107,7 +107,7 @@ var XyxzOrderListItem = Component{
 }
 
 var TabComponent = Component{
-	Name: "suifengpiao14/tab",
+	ComponentName: "suifengpiao14/tab",
 	Template: `
 	 	<div data-fullname="{{namespace}}/tab" role="tablist" class="tabs tabs-bordered "
 		x-data='$tab({"tab_eventName":"{{eventName}}","tab_activeTabId":"{{activeTabId}}"})'>
@@ -142,7 +142,7 @@ var TabComponent = Component{
 }
 
 var TableComponent = Component{
-	Name: "suifengpiao14/table",
+	ComponentName: "suifengpiao14/table",
 	Template: `
 	<table class="min-w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
             <thead class="bg-indigo-600 text-white">
@@ -200,7 +200,7 @@ var TableComponent = Component{
 }
 
 var SearchFormComponent = Component{
-	Name: "suifengpiao14/searchForm",
+	ComponentName: "suifengpiao14/searchForm",
 	Template: `
  <form hx-post="{{hxpost}}" hx-target="{{hxtarget}}" hx-ext="json-enc-custom"
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 bg-white rounded-lg shadow-md">
@@ -277,7 +277,7 @@ var SearchFormComponent = Component{
 }
 
 var HtmlDocumentComponent = Component{
-	Name: "suifengpiao14/htmlDocument",
+	ComponentName: "suifengpiao14/htmlDocument",
 	Template: `
 	<!DOCTYPE html>
 <html lang="en">

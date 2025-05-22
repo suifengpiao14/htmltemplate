@@ -80,15 +80,7 @@ func (s HtmlTemplateService[C, A, R]) _GetComponentByComponentNames(componentNam
 	if err != nil {
 		return nil, err
 	}
-	for _, model := range models {
-		component := htmlcomponent.Component{
-			Name:     model.GetName(),
-			Template: model.GetTemplate(),
-			DataTpl:  model.GetDataTpl(),
-		}
-		components = append(components, component)
-	}
-	return components, nil
+	return models, nil
 }
 
 func (s HtmlTemplateService[C, A, R]) _GetAttributesByRootComponentName(rootComponentName string) (attributes htmlcomponent.Attributes, err error) {
