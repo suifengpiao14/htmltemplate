@@ -17,11 +17,10 @@ import (
 */
 
 type Attribute struct {
-	NodeId string `json:"nodeId"`
-	Key    string `json:"key"`
-	//Title  string `json:"title"`
-	Value string `json:"value"`
-	sort  int    `json:"-"`
+	NodeId         string `gorm:"column:nodeId" json:"nodeId"`
+	AttributeName  string `gorm:"column:attributeName" json:"key"`
+	AttributeValue string `gorm:"column:attributeValue" json:"value"`
+	sort           int
 }
 
 func (a Attribute) String() string {
@@ -58,7 +57,7 @@ func (a *Attributes) Remove(names ...string) {
 	for _, attr := range *a {
 		ignore := false
 		for _, name := range names {
-			if strings.EqualFold(name, attr.Key) {
+			if strings.EqualFold(name, attr.AttributeName) {
 				ignore = true
 				break
 			}
@@ -82,7 +81,7 @@ var Attr_sort = []string{"_id", "name", "class", "value", "type", "data-nid"}
 func (a *Attributes) initSort() {
 	for i, v := range *a {
 		for j, sortKey := range Attr_sort {
-			if v.Key == sortKey {
+			if v.AttributeName == sortKey {
 				(*a)[i].sort = j
 			}
 		}
@@ -92,12 +91,12 @@ func (a *Attributes) initSort() {
 
 func (as Attributes) GetByKey(key string) Attribute {
 	for _, attr := range as {
-		if attr.Key == key {
+		if attr.AttributeName == key {
 			return attr
 		}
 	}
 	return Attribute{
-		Key: key,
+		AttributeName: key,
 	}
 }
 func (as *Attributes) ResetByKey(newAttr Attribute) {
@@ -108,7 +107,7 @@ func (as *Attributes) ResetByKey(newAttr Attribute) {
 		return
 	}
 	for i := range *as {
-		if (*as)[i].Key == newAttr.Key {
+		if (*as)[i].AttributeName == newAttr.AttributeName {
 			(*as)[i] = newAttr
 		}
 	}
@@ -122,7 +121,7 @@ func (a *Attributes) Append(attrs ...Attribute) {
 func (a Attributes) String() string {
 	attrs := make([]string, 0)
 	for _, attr := range a {
-		attrs = append(attrs, fmt.Sprintf(`%s="%s"`, attr.Key, attr.Value))
+		attrs = append(attrs, fmt.Sprintf(`%s="%s"`, attr.AttributeName, attr.AttributeValue))
 	}
 	out := strings.Join(attrs, " ")
 	return out
@@ -137,8 +136,8 @@ func ParseAttributes(attrString string) (attrs Attributes, err error) {
 	divNode := htmlquery.FindOne(root, "//div")
 	for _, attr := range divNode.Attr {
 		attrs = append(attrs, Attribute{
-			Key:   attr.Key,
-			Value: attr.Val,
+			AttributeName:  attr.Key,
+			AttributeValue: attr.Val,
 		})
 	}
 	return attrs, nil

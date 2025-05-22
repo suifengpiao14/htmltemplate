@@ -1,0 +1,109 @@
+package htmlrepository
+
+import (
+	"github.com/suifengpiao14/commonlanguage"
+	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
+	"github.com/suifengpiao14/memorytable"
+	"github.com/suifengpiao14/sqlbuilder"
+)
+
+type HtmlTemplateApiService struct {
+	componentService _ComponentSerivce[htmlcomponent.Component]
+	assembleService  _AssembleService[htmlcomponent.Assemble]
+	attributeService _AttributeService[htmlcomponent.Attribute]
+}
+
+func NewHtmlTemplateApiService(dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) *HtmlTemplateApiService {
+	tableConfig := customTableConfig(dbHander, customTableFn)
+	componentService := newComponentSerivce[htmlcomponent.Component](tableConfig.Component)
+	assembleService := newAssembleService[htmlcomponent.Assemble](tableConfig.Assemble)
+	attributeService := newAttributeService[htmlcomponent.Attribute](tableConfig.Attribute)
+	return &HtmlTemplateApiService{
+		componentService: componentService,
+		assembleService:  assembleService,
+		attributeService: attributeService,
+	}
+}
+
+func (s HtmlTemplateApiService) Render(componentRootName string, data map[string]any) (rootComponentHtml string, err error) {
+	rootComponent, err := s.GetComponent(componentRootName)
+	if err != nil {
+		return "", err
+	}
+	rootComponentHtml, err = rootComponent.ToHtml(data)
+	if err != nil {
+		return "", err
+	}
+	return rootComponentHtml, nil
+}
+
+func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComponentHtml htmlcomponent.RootComponent, err error) {
+	assembles, err := s.assembleService.ListByRootComponentName(componentRootName, nil)
+	if err != nil {
+		return rootComponentHtml, err
+	}
+	rootComponentHtml.Assembles = htmlcomponent.Assembles(assembles)
+	componentNames := rootComponentHtml.Assembles.ComponentNames()
+	componentNames = append(componentNames, componentRootName)
+	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
+	components, err := s.componentService.ListByComponentNames(componentNames)
+	if err != nil {
+		return rootComponentHtml, err
+	}
+	rootComponentHtml.Components = components
+	attrs, err := s.attributeService.ListByRootComponentName(componentRootName, nil)
+	if err != nil {
+		return rootComponentHtml, err
+	}
+	rootComponentHtml.Name = componentRootName
+	rootComponentHtml.Attributes = attrs
+	return rootComponentHtml, nil
+}
+
+type HtmlTemplateAdminService[C any, A any, R any] struct {
+	componentService _ComponentSerivce[C]
+	assembleService  _AssembleService[A]
+	attributeService _AttributeService[R]
+}
+
+func (s HtmlTemplateAdminService[C, A, R]) ListByComponentNames(componentNames []string) (components []C, err error) {
+	return s.componentService.ListByComponentNames(componentNames)
+}
+
+func (s HtmlTemplateAdminService[C, A, R]) ComponentSet(c htmlcomponent.Component, customFn sqlbuilder.CustomFnSetParam) (err error) {
+	return s.componentService.Set(c, customFn)
+}
+
+func (s HtmlTemplateAdminService[C, A, R]) ComponentPagination(pageIndex, pageSize int, customFn sqlbuilder.CustomFnPaginationParam) (models []C, total int64, err error) {
+	fields := sqlbuilder.Fields{
+		commonlanguage.NewPageIndex(pageIndex),
+		commonlanguage.NewPageSize(pageSize),
+	}
+
+	return s.componentService.repositoryQuery.Pagination(fields, customFn)
+}
+
+func (s HtmlTemplateAdminService[C, A, R]) AssembleSet(assemble htmlcomponent.Assemble, customFn sqlbuilder.CustomFnSetParam) (err error) {
+	return s.assembleService.Set(assemble, customFn)
+}
+
+func (s HtmlTemplateAdminService[C, A, R]) AssembleGetAllByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) ([]A, error) {
+
+	return s.assembleService.ListByRootComponentName(rootComponentName, customFn)
+}
+func (s HtmlTemplateAdminService[C, A, R]) AssembleDelete(assemble htmlcomponent.Assemble, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+
+	return s.assembleService.Delete(assemble, customFn)
+}
+
+func (s HtmlTemplateAdminService[C, A, R]) AttributeSet(attribute htmlcomponent.Attribute, customFn sqlbuilder.CustomFnSetParam) (err error) {
+
+	return s.attributeService.Set(attribute, customFn)
+}
+
+func (s HtmlTemplateAdminService[C, A, R]) AttributeGetAllByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
+	return s.attributeService.ListByRootComponentName(rootComponentName, customFn)
+}
+func (s HtmlTemplateAdminService[C, A, R]) AttributeDelete(attribute htmlcomponent.Attribute, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+	return s.attributeService.Delete(attribute, customFn)
+}
