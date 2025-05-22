@@ -2,9 +2,12 @@ package htmlrepository
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/doug-martin/goqu/v9"
 	"github.com/pkg/errors"
 	"github.com/suifengpiao14/commonlanguage"
+	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
 	"github.com/suifengpiao14/sqlbuilder"
 )
 
@@ -14,16 +17,19 @@ func NewHtmlTemplateServiceByDefaultService[C Component, A Assemble, R Attribute
 }
 
 type ComponentSerivce[C Component] struct {
-	repositoryQuery   sqlbuilder.RepositoryQuery[C]
-	repositoryCommand sqlbuilder.RepositoryCommand
+	repositoryQueryAny sqlbuilder.RepositoryQuery[htmlcomponent.Component]
+	repositoryQuery    sqlbuilder.RepositoryQuery[C]
+	repositoryCommand  sqlbuilder.RepositoryCommand
 }
 
 func NewComponentSerivce[C Component](tableConfig sqlbuilder.TableConfig) ComponentSerivce[C] {
+	repositoryQueryAny := sqlbuilder.NewRepositoryQuery[htmlcomponent.Component](tableConfig)
 	repositoryQuery := sqlbuilder.NewRepositoryQuery[C](tableConfig)
 	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
 	return ComponentSerivce[C]{
-		repositoryQuery:   repositoryQuery,
-		repositoryCommand: repositoryCommand,
+		repositoryQueryAny: repositoryQueryAny,
+		repositoryQuery:    repositoryQuery,
+		repositoryCommand:  repositoryCommand,
 	}
 }
 
@@ -41,9 +47,28 @@ func (s ComponentSerivce[C]) Set(c C, customFn sqlbuilder.CustomFnSetParam) (err
 }
 func (s ComponentSerivce[C]) ListByComponentNames(componentNames []string) (models []C, err error) {
 	fields := sqlbuilder.Fields{
-		NewComponentNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewComponentNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward).Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
+			f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
+				columns := f.GetTable().Columns
+				componentNameColumn := columns.GetByFieldNameMust(sqlbuilder.GetFieldName(NewComponentNameField))
+				templateColumn := columns.GetByFieldNameMust(sqlbuilder.GetFieldName(NewTemplateField))
+				dataTplColumn := columns.GetByFieldNameMust(sqlbuilder.GetFieldName(NewDataTplField))
+				f.SetSelectColumns(
+					goqu.I(componentNameColumn.DbName).As(componentNameColumn.FieldName),
+					goqu.I(templateColumn.DbName).As(templateColumn.FieldName),
+					goqu.I(dataTplColumn.DbName).As(dataTplColumn.FieldName),
+				)
+			})
+
+		}),
 	}
-	return s.repositoryQuery.All(fields, nil)
+	modelsAny, err := s.repositoryQueryAny.All(fields, nil)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Sprintln(modelsAny)
+
+	return models, nil
 }
 
 type AssembleService[A Assemble] struct {
@@ -86,7 +111,7 @@ func (s AssembleService[A]) ListByRootComponentName(rootComponentName string, cu
 
 func (s AssembleService[A]) Delete(assemble A, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 	ctx := context.Background()
-	_, err = s.repositoryCommand.GetTableConfig().RunTableLevelFieldsHook(ctx, sqlbuilder.SCENE_SQL_DELETE).DeletedAt()
+	_, err = s.repositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
 	if err != nil {
 		err = errors.WithMessage(err, "should set sorft delete field by tableConfig.TableLevelFieldsHook")
 		return err
@@ -142,7 +167,7 @@ func (s AttributeService[R]) ListByRootComponentName(rootComponentName string, c
 
 func (s AttributeService[R]) Delete(attribute R, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 	ctx := context.Background()
-	_, err = s.repositoryCommand.GetTableConfig().RunTableLevelFieldsHook(ctx, sqlbuilder.SCENE_SQL_DELETE).DeletedAt()
+	_, err = s.repositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
 	if err != nil {
 		err = errors.WithMessage(err, "should set sorft delete field by tableConfig.TableLevelFieldsHook")
 		return err

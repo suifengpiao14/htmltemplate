@@ -14,21 +14,9 @@ type HtmlTemplateService[C Component, A Assemble, R Attribute] struct {
 
 func NewHtmlTemplateService[C Component, A Assemble, R Attribute](dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) *HtmlTemplateService[C, A, R] {
 	tableConfig := customTableConfig(dbHander, customTableFn)
-
-	componentService := ComponentSerivce[C]{
-		repositoryQuery:   sqlbuilder.NewRepositoryQuery[C](tableConfig.Component),
-		repositoryCommand: sqlbuilder.NewRepositoryCommand(tableConfig.Component),
-	}
-
-	assembleService := AssembleService[A]{
-		repositoryQuery: sqlbuilder.NewRepositoryQuery[A](tableConfig.Assemble),
-
-		repositoryCommand: sqlbuilder.NewRepositoryCommand(tableConfig.Assemble),
-	}
-	attributeService := AttributeService[R]{
-		repositoryQuery:   sqlbuilder.NewRepositoryQuery[R](tableConfig.Attribute),
-		repositoryCommand: sqlbuilder.NewRepositoryCommand(tableConfig.Attribute),
-	}
+	componentService := NewComponentSerivce[C](tableConfig.Component)
+	assembleService := NewAssembleService[A](tableConfig.Assemble)
+	attributeService := NewAttributeService[R](tableConfig.Attribute)
 	return &HtmlTemplateService[C, A, R]{
 		componentService: componentService,
 		assembleService:  assembleService,
