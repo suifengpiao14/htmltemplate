@@ -164,24 +164,6 @@ type TableConfig struct {
 	Attribute sqlbuilder.TableConfig
 }
 
-func (c TableConfig) AddIndex() TableConfig {
-	// 组件名称唯一索引
-	componentColumn := c.Component.Columns.GetByFieldNameMust(NewComponentNameField("").Name)
-	c.Component.Indexs.Append(sqlbuilder.Index{Unique: true, ColumnNames: []string{componentColumn.DbName}}) // 组件唯一索引
-
-	// 组合中同一个rootComponentName 下 assembleName 唯一索引
-	rootComponentColumn := c.Assemble.Columns.GetByFieldNameMust(NewRootComponentNameField("").Name)
-	AssembleColumn := c.Assemble.Columns.GetByFieldNameMust(NewAssembleNameField("").Name)
-	c.Assemble.Indexs.Append(sqlbuilder.Index{Unique: true, ColumnNames: []string{AssembleColumn.DbName, rootComponentColumn.DbName}})
-
-	// 同一个节点，属性名称唯一索引
-	nodeIdColumn := c.Attribute.Columns.GetByFieldNameMust(NewNodeIdField("").Name)
-	attributeColumn := c.Attribute.Columns.GetByFieldNameMust(NewAttributeNameField("").Name)
-	c.Attribute.Indexs.Append(sqlbuilder.Index{Unique: true, ColumnNames: []string{nodeIdColumn.DbName, attributeColumn.DbName}})
-
-	return c
-}
-
 func (s HtmlTemplateService[C, A, R]) ListByComponentNames(componentNames []string) ([]C, error) {
 
 	return s.componentService.ListByComponentNames(componentNames)

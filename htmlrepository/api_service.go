@@ -12,8 +12,9 @@ type HtmlTemplateService[C Component, A Assemble, R Attribute] struct {
 	attributeService AttributeService[R]
 }
 
-func NewHtmlTemplateService[C Component, A Assemble, R Attribute](tableConfig TableConfig) *HtmlTemplateService[C, A, R] {
-	tableConfig = tableConfig.AddIndex()
+func NewHtmlTemplateService[C Component, A Assemble, R Attribute](dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) *HtmlTemplateService[C, A, R] {
+	tableConfig := customTableConfig(dbHander, customTableFn)
+
 	componentService := ComponentSerivce[C]{
 		repositoryQuery:   sqlbuilder.NewRepositoryQuery[C](tableConfig.Component),
 		repositoryCommand: sqlbuilder.NewRepositoryCommand(tableConfig.Component),
