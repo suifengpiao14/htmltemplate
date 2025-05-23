@@ -12,7 +12,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/suifengpiao14/funcs v0.0.25
 	github.com/suifengpiao14/memorytable v0.0.12
-	github.com/suifengpiao14/sqlbuilder v0.1.45
+	github.com/suifengpiao14/sqlbuilder v0.1.46
 	golang.org/x/net v0.33.0
 )
 
