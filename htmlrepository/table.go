@@ -52,8 +52,8 @@ var table_attribute = sqlbuilder.NewTableConfig("t_attribute").AddColumns(
 	},
 })
 
-//customTableConfig 初始化表配置信息
-func customTableConfig(dbHandler sqlbuilder.Handler, configFn func(table TableConfig) (configedTable TableConfig)) TableConfig {
+//CustomTableConfig 初始化表配置信息
+func CustomTableConfig(dbHandler sqlbuilder.Handler, configFn func(table TableConfig) (configedTable TableConfig)) TableConfig {
 	var tableConfig = TableConfig{
 		Component: table_component,
 		Assemble:  table_assemble,

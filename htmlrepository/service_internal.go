@@ -7,21 +7,21 @@ import (
 	"github.com/suifengpiao14/sqlbuilder"
 )
 
-type _ComponentSerivce[C any] struct {
+type ComponentSerivce[C any] struct {
 	sqlbuilder.RepositoryQuery[C]
 	sqlbuilder.RepositoryCommand
 }
 
-func newComponentSerivce[C any](tableConfig sqlbuilder.TableConfig) _ComponentSerivce[C] {
+func newComponentSerivce[C any](tableConfig sqlbuilder.TableConfig) ComponentSerivce[C] {
 	repositoryQuery := sqlbuilder.NewRepositoryQuery[C](tableConfig)
 	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return _ComponentSerivce[C]{
+	return ComponentSerivce[C]{
 		RepositoryQuery:   repositoryQuery,
 		RepositoryCommand: repositoryCommand,
 	}
 }
 
-func (s _ComponentSerivce[C]) Set(c Component, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s ComponentSerivce[C]) Set(c Component, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewComponentNameField(c.ComponentName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewTemplateField(c.Template).SetRequired(true),
@@ -34,7 +34,7 @@ func (s _ComponentSerivce[C]) Set(c Component, customFn sqlbuilder.CustomFnSetPa
 	return nil
 }
 
-func (s _ComponentSerivce[C]) ListByComponentNames(componentNames []string, customFn sqlbuilder.CustomFnListParam) (models []C, err error) {
+func (s ComponentSerivce[C]) ListByComponentNames(componentNames []string, customFn sqlbuilder.CustomFnListParam) (models []C, err error) {
 	fields := sqlbuilder.Fields{
 		NewComponentNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
@@ -45,21 +45,21 @@ func (s _ComponentSerivce[C]) ListByComponentNames(componentNames []string, cust
 	return models, nil
 }
 
-type _AssembleService[A any] struct {
+type AssembleService[A any] struct {
 	sqlbuilder.RepositoryQuery[A]
 	sqlbuilder.RepositoryCommand
 }
 
-func newAssembleService[A any](tableConfig sqlbuilder.TableConfig) _AssembleService[A] {
+func newAssembleService[A any](tableConfig sqlbuilder.TableConfig) AssembleService[A] {
 	repositoryQuery := sqlbuilder.NewRepositoryQuery[A](tableConfig)
 	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return _AssembleService[A]{
+	return AssembleService[A]{
 		RepositoryQuery:   repositoryQuery,
 		RepositoryCommand: repositoryCommand,
 	}
 }
 
-func (s _AssembleService[A]) Set(assemble Assemble, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s AssembleService[A]) Set(assemble Assemble, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewRootComponentNameField(assemble.RootComponentName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewAssembleNameField(assemble.AssembleName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
@@ -72,7 +72,7 @@ func (s _AssembleService[A]) Set(assemble Assemble, customFn sqlbuilder.CustomFn
 	}
 	return nil
 }
-func (s _AssembleService[A]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
+func (s AssembleService[A]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
 	fields := sqlbuilder.Fields{
 		NewRootComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
@@ -83,7 +83,7 @@ func (s _AssembleService[A]) ListByRootComponentName(rootComponentName string, c
 	return models, nil
 }
 
-func (s _AssembleService[A]) Delete(assemble Assemble, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s AssembleService[A]) Delete(assemble Assemble, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 	ctx := context.Background()
 
 	_, err = s.RepositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
@@ -102,21 +102,21 @@ func (s _AssembleService[A]) Delete(assemble Assemble, customFn sqlbuilder.Custo
 	return nil
 }
 
-type _AttributeService[R any] struct {
+type AttributeService[R any] struct {
 	sqlbuilder.RepositoryQuery[R]
 	sqlbuilder.RepositoryCommand
 }
 
-func newAttributeService[R any](tableConfig sqlbuilder.TableConfig) _AttributeService[R] {
+func newAttributeService[R any](tableConfig sqlbuilder.TableConfig) AttributeService[R] {
 	repositoryQuery := sqlbuilder.NewRepositoryQuery[R](tableConfig)
 	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return _AttributeService[R]{
+	return AttributeService[R]{
 		RepositoryQuery:   repositoryQuery,
 		RepositoryCommand: repositoryCommand,
 	}
 }
 
-func (s _AttributeService[R]) Set(attribute Attribute, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s AttributeService[R]) Set(attribute Attribute, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewNodeIdField(attribute.NodeId).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewAttributeNameField(attribute.AttributeName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
@@ -129,7 +129,7 @@ func (s _AttributeService[R]) Set(attribute Attribute, customFn sqlbuilder.Custo
 	return nil
 }
 
-func (s _AttributeService[R]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
+func (s AttributeService[R]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
 	fields := sqlbuilder.Fields{
 		NewRootComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
@@ -140,7 +140,7 @@ func (s _AttributeService[R]) ListByRootComponentName(rootComponentName string, 
 	return models, nil
 }
 
-func (s _AttributeService[R]) Delete(attribute Attribute, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s AttributeService[R]) Delete(attribute Attribute, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 	ctx := context.Background()
 	_, err = s.RepositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
 	if err != nil {

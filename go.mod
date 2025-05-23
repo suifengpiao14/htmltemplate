@@ -10,7 +10,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cast v1.8.0
 	github.com/stretchr/testify v1.10.0
-	github.com/suifengpiao14/commonlanguage v0.0.12
 	github.com/suifengpiao14/funcs v0.0.25
 	github.com/suifengpiao14/memorytable v0.0.12
 	github.com/suifengpiao14/sqlbuilder v0.1.45
