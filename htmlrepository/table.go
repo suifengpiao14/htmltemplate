@@ -2,6 +2,12 @@ package htmlrepository
 
 import "github.com/suifengpiao14/sqlbuilder"
 
+type TableConfig struct {
+	Component sqlbuilder.TableConfig
+	Assemble  sqlbuilder.TableConfig
+	Attribute sqlbuilder.TableConfig
+}
+
 var table_component = sqlbuilder.NewTableConfig("t_component").AddColumns(
 	sqlbuilder.NewColumnConfig("Fcomponent_name", sqlbuilder.GetFieldName(NewComponentNameField)),
 	sqlbuilder.NewColumnConfig("Ftemplate", sqlbuilder.GetFieldName(NewTemplateField)),

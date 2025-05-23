@@ -109,12 +109,28 @@ type HtmlTemplateAdminService[C any, A any, R any] struct {
 	attributeService _AttributeService[R]
 }
 
+func NewHtmlTemplateAdminService[C any, A any, R any](dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) HtmlTemplateAdminService[C, A, R] {
+	tableConfig := customTableConfig(dbHander, customTableFn)
+	componentService := newComponentSerivce[C](tableConfig.Component)
+	assembleService := newAssembleService[A](tableConfig.Assemble)
+	attributeService := newAttributeService[R](tableConfig.Attribute)
+	return HtmlTemplateAdminService[C, A, R]{
+		componentService: componentService,
+		assembleService:  assembleService,
+		attributeService: attributeService,
+	}
+}
+
 func (s HtmlTemplateAdminService[C, A, R]) ListByComponentNames(componentNames []string) (components []C, err error) {
 	return s.componentService.ListByComponentNames(componentNames, nil)
 }
 
-func (s HtmlTemplateAdminService[C, A, R]) ComponentSet(c htmlcomponent.Component, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s HtmlTemplateAdminService[C, A, R]) ComponentSet(c Component, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	return s.componentService.Set(c, customFn)
+}
+
+func (s HtmlTemplateAdminService[C, A, R]) ComponentFirst(fields sqlbuilder.Fields, customFn sqlbuilder.CustomFnFirstParam) (model C, exists bool, err error) {
+	return s.componentService.First(fields, customFn)
 }
 
 func (s HtmlTemplateAdminService[C, A, R]) ComponentPagination(pageIndex, pageSize int, customFn sqlbuilder.CustomFnPaginationParam) (models []C, total int64, err error) {
@@ -122,10 +138,13 @@ func (s HtmlTemplateAdminService[C, A, R]) ComponentPagination(pageIndex, pageSi
 		commonlanguage.NewPageIndex(pageIndex),
 		commonlanguage.NewPageSize(pageSize),
 	}
-	return s.componentService.repositoryQuery.Pagination(fields, customFn)
+	return s.componentService.Pagination(fields, customFn)
+}
+func (s HtmlTemplateAdminService[C, A, R]) ComponentAll(fields sqlbuilder.Fields, customFn sqlbuilder.CustomFnListParam) (models []C, err error) {
+	return s.componentService.All(fields, customFn)
 }
 
-func (s HtmlTemplateAdminService[C, A, R]) AssembleSet(assemble htmlcomponent.Assemble, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s HtmlTemplateAdminService[C, A, R]) AssembleSet(assemble Assemble, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	return s.assembleService.Set(assemble, customFn)
 }
 
@@ -133,12 +152,12 @@ func (s HtmlTemplateAdminService[C, A, R]) AssembleGetAllByRootComponentName(roo
 
 	return s.assembleService.ListByRootComponentName(rootComponentName, customFn)
 }
-func (s HtmlTemplateAdminService[C, A, R]) AssembleDelete(assemble htmlcomponent.Assemble, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s HtmlTemplateAdminService[C, A, R]) AssembleDelete(assemble Assemble, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 
 	return s.assembleService.Delete(assemble, customFn)
 }
 
-func (s HtmlTemplateAdminService[C, A, R]) AttributeSet(attribute htmlcomponent.Attribute, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s HtmlTemplateAdminService[C, A, R]) AttributeSet(attribute Attribute, customFn sqlbuilder.CustomFnSetParam) (err error) {
 
 	return s.attributeService.Set(attribute, customFn)
 }
@@ -146,6 +165,6 @@ func (s HtmlTemplateAdminService[C, A, R]) AttributeSet(attribute htmlcomponent.
 func (s HtmlTemplateAdminService[C, A, R]) AttributeGetAllByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
 	return s.attributeService.ListByRootComponentName(rootComponentName, customFn)
 }
-func (s HtmlTemplateAdminService[C, A, R]) AttributeDelete(attribute htmlcomponent.Attribute, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s HtmlTemplateAdminService[C, A, R]) AttributeDelete(attribute Attribute, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 	return s.attributeService.Delete(attribute, customFn)
 }
