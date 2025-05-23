@@ -17,9 +17,9 @@ import (
 */
 
 type Attribute struct {
-	NodeId         string `gorm:"column:nodeId" json:"nodeId"`
-	AttributeName  string `gorm:"column:attributeName" json:"key"`
-	AttributeValue string `gorm:"column:attributeValue" json:"value"`
+	NodeId         string `json:"nodeId"`
+	AttributeName  string `json:"key"`
+	AttributeValue string `json:"value"`
 	sort           int
 }
 

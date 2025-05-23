@@ -11,12 +11,13 @@ import (
 )
 
 type Assemble struct {
-	RootComponentName string   `gorm:"column:rootComponentName" json:"rootComponentName"`
-	ComponentName     string   `gorm:"column:componentName" json:"componentName"`
-	AssembleName      string   `gorm:"column:assembleName" json:"assembleName"`
-	DataTpl           string   `gorm:"column:dataTpl" json:"dataTpl"`
-	DataExample       string   `gorm:"column:dataExample" json:"dataExample"`
-	dependences       []string //依赖组件(所有的input key)
+	RootComponentName string `json:"rootComponentName"`
+
+	ComponentName string   `json:"componentName"`
+	AssembleName  string   `json:"assembleName"`
+	DataTpl       string   `json:"dataTpl"`
+	DataExample   string   `json:"dataExample"`
+	dependences   []string //依赖组件(所有的input key)
 
 }
 

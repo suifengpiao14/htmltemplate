@@ -3,7 +3,6 @@ package htmlrepository
 import (
 	"context"
 
-	"github.com/doug-martin/goqu/v9"
 	"github.com/pkg/errors"
 	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
 	"github.com/suifengpiao14/sqlbuilder"
@@ -35,24 +34,11 @@ func (s _ComponentSerivce[C]) Set(c htmlcomponent.Component, customFn sqlbuilder
 	}
 	return nil
 }
-func (s _ComponentSerivce[C]) ListByComponentNames(componentNames []string) (models []C, err error) {
+func (s _ComponentSerivce[C]) ListByComponentNames(componentNames []string, customFn sqlbuilder.CustomFnListParam) (models []C, err error) {
 	fields := sqlbuilder.Fields{
-		NewComponentNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward).Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
-			f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
-				columns := f.GetTable().Columns
-				componentNameColumn := columns.GetByFieldNameMust(sqlbuilder.GetFieldName(NewComponentNameField))
-				templateColumn := columns.GetByFieldNameMust(sqlbuilder.GetFieldName(NewTemplateField))
-				dataTplColumn := columns.GetByFieldNameMust(sqlbuilder.GetFieldName(NewDataTplField))
-				f.SetSelectColumns(
-					goqu.I(componentNameColumn.DbName).As(componentNameColumn.FieldName),
-					goqu.I(templateColumn.DbName).As(templateColumn.FieldName),
-					goqu.I(dataTplColumn.DbName).As(dataTplColumn.FieldName),
-				)
-			})
-
-		}),
+		NewComponentNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
-	models, err = s.repositoryQuery.All(fields, nil)
+	models, err = s.repositoryQuery.All(fields, customFn)
 	if err != nil {
 		return nil, err
 	}

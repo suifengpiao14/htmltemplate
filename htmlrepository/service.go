@@ -8,16 +8,16 @@ import (
 )
 
 type HtmlTemplateApiService struct {
-	componentService _ComponentSerivce[htmlcomponent.Component]
-	assembleService  _AssembleService[htmlcomponent.Assemble]
-	attributeService _AttributeService[htmlcomponent.Attribute]
+	componentService _ComponentSerivce[Component]
+	assembleService  _AssembleService[Assemble]
+	attributeService _AttributeService[Attribute]
 }
 
 func NewHtmlTemplateApiService(dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) *HtmlTemplateApiService {
 	tableConfig := customTableConfig(dbHander, customTableFn)
-	componentService := newComponentSerivce[htmlcomponent.Component](tableConfig.Component)
-	assembleService := newAssembleService[htmlcomponent.Assemble](tableConfig.Assemble)
-	attributeService := newAttributeService[htmlcomponent.Attribute](tableConfig.Attribute)
+	componentService := newComponentSerivce[Component](tableConfig.Component)
+	assembleService := newAssembleService[Assemble](tableConfig.Assemble)
+	attributeService := newAttributeService[Attribute](tableConfig.Attribute)
 	return &HtmlTemplateApiService{
 		componentService: componentService,
 		assembleService:  assembleService,
@@ -38,25 +38,68 @@ func (s HtmlTemplateApiService) Render(componentRootName string, data map[string
 }
 
 func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComponentHtml htmlcomponent.RootComponent, err error) {
-	assembles, err := s.assembleService.ListByRootComponentName(componentRootName, nil)
+	assembles, err := s.assembleService.ListByRootComponentName(componentRootName, func(listParam *sqlbuilder.ListParam) {
+		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
+			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
+				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
+					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
+						sqlbuilder.GetFieldName(NewRootComponentNameField),
+						sqlbuilder.GetFieldName(NewComponentNameField),
+						sqlbuilder.GetFieldName(NewAssembleNameField),
+						sqlbuilder.GetFieldName(NewDataTplField),
+					).DbNameWithAlias()
+					f.SetSelectColumns(setSelectColumns.AsAny()...)
+				})
+			})
+			return fs
+		})
+	})
 	if err != nil {
 		return rootComponentHtml, err
 	}
-	rootComponentHtml.Assembles = htmlcomponent.Assembles(assembles)
+	rootComponentHtml.Assembles = ToHtmlAssembles(assembles...)
 	componentNames := rootComponentHtml.Assembles.ComponentNames()
 	componentNames = append(componentNames, componentRootName)
 	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
-	components, err := s.componentService.ListByComponentNames(componentNames)
+	components, err := s.componentService.ListByComponentNames(componentNames, func(listParam *sqlbuilder.ListParam) {
+		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
+			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
+				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
+					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
+						sqlbuilder.GetFieldName(NewComponentNameField),
+						sqlbuilder.GetFieldName(NewTemplateField),
+						sqlbuilder.GetFieldName(NewDataTplField),
+					).DbNameWithAlias()
+					f.SetSelectColumns(setSelectColumns.AsAny()...)
+				})
+			})
+			return fs
+		})
+	})
 	if err != nil {
 		return rootComponentHtml, err
 	}
-	rootComponentHtml.Components = components
-	attrs, err := s.attributeService.ListByRootComponentName(componentRootName, nil)
+	rootComponentHtml.Components = ToHtmlComponents(components...)
+	attrs, err := s.attributeService.ListByRootComponentName(componentRootName, func(listParam *sqlbuilder.ListParam) {
+		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
+			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
+				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
+					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
+						sqlbuilder.GetFieldName(NewNodeIdField),
+						sqlbuilder.GetFieldName(NewAttributeNameField),
+						sqlbuilder.GetFieldName(NewAttributeValueField),
+					).DbNameWithAlias()
+					f.SetSelectColumns(setSelectColumns.AsAny()...)
+				})
+			})
+			return fs
+		})
+	})
 	if err != nil {
 		return rootComponentHtml, err
 	}
 	rootComponentHtml.Name = componentRootName
-	rootComponentHtml.Attributes = attrs
+	rootComponentHtml.Attributes = ToHtmlAttributes(attrs...)
 	return rootComponentHtml, nil
 }
 
@@ -67,7 +110,7 @@ type HtmlTemplateAdminService[C any, A any, R any] struct {
 }
 
 func (s HtmlTemplateAdminService[C, A, R]) ListByComponentNames(componentNames []string) (components []C, err error) {
-	return s.componentService.ListByComponentNames(componentNames)
+	return s.componentService.ListByComponentNames(componentNames, nil)
 }
 
 func (s HtmlTemplateAdminService[C, A, R]) ComponentSet(c htmlcomponent.Component, customFn sqlbuilder.CustomFnSetParam) (err error) {
@@ -79,7 +122,6 @@ func (s HtmlTemplateAdminService[C, A, R]) ComponentPagination(pageIndex, pageSi
 		commonlanguage.NewPageIndex(pageIndex),
 		commonlanguage.NewPageSize(pageSize),
 	}
-
 	return s.componentService.repositoryQuery.Pagination(fields, customFn)
 }
 
