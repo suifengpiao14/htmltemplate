@@ -17,7 +17,7 @@ import (
 */
 
 type Attribute struct {
-	NodeId         string `json:"nodeId"`
+	TagNodeID      string `json:"tagNodeId"` // html标签id
 	AttributeName  string `json:"key"`
 	AttributeValue string `json:"value"`
 	sort           int
@@ -37,7 +37,7 @@ type Attributes []Attribute
 func (as Attributes) MapData() (attrMap map[string]any) {
 	attrMap = make(map[string]any)
 	for _, a := range as {
-		attrMap[htmlenhance.AttrPlaceholderName(a.NodeId)] = as.GetByNodeKey(a.NodeId).String()
+		attrMap[htmlenhance.AttrPlaceholderName(a.TagNodeID)] = as.GetByNodeKey(a.TagNodeID).String()
 	}
 	return attrMap
 }
@@ -45,7 +45,7 @@ func (as Attributes) MapData() (attrMap map[string]any) {
 func (as Attributes) GetByNodeKey(nodeKey string) Attributes {
 	arr := Attributes{}
 	for _, attr := range as {
-		if strings.EqualFold(attr.NodeId, nodeKey) {
+		if strings.EqualFold(attr.TagNodeID, nodeKey) {
 			arr = append(arr, attr)
 		}
 	}
@@ -114,7 +114,7 @@ func (as *Attributes) ResetByKey(newAttr Attribute) {
 }
 
 func (a *Attributes) Append(attrs ...Attribute) {
-	tmp := memorytable.NewTable(*a...).Set(func(t Attribute) (identity string) { return t.NodeId }, attrs...)
+	tmp := memorytable.NewTable(*a...).Set(func(t Attribute) (identity string) { return t.TagNodeID }, attrs...)
 	*a = Attributes(tmp)
 }
 

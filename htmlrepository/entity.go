@@ -29,11 +29,11 @@ type Attribute struct {
 
 func ToHtmlAssemble(assemble Assemble) htmlcomponent.ComponentNode {
 	return htmlcomponent.ComponentNode{
-		ParentNodeID:  assemble.RootComponentName,
-		ComponentName: assemble.ComponentName,
-		NodeID:        assemble.AssembleName,
-		Props:         assemble.DataTpl,
-		DataExample:   assemble.DataExample,
+		ParentNodeID: assemble.RootComponentName,
+		TemplateName: assemble.ComponentName,
+		NodeID:       assemble.AssembleName,
+		Props:        assemble.DataTpl,
+		DataExample:  assemble.DataExample,
 	}
 }
 
@@ -45,7 +45,7 @@ func ToHtmlAssembles(assembles ...Assemble) htmlcomponent.ComponentNodes {
 
 func ToHtmlAttribute(attribute Attribute) htmlcomponent.Attribute {
 	return htmlcomponent.Attribute{
-		NodeId:         attribute.NodeId,
+		TagNodeID:      attribute.NodeId,
 		AttributeName:  attribute.AttributeName,
 		AttributeValue: attribute.AttributeValue,
 	}
@@ -57,17 +57,17 @@ func ToHtmlAttributes(attributes ...Attribute) htmlcomponent.Attributes {
 	})
 }
 
-func ToHtmlComponent(component Component) htmlcomponent.Component {
-	return htmlcomponent.Component{
-		ComponentName: component.ComponentName,
-		Template:      component.Template,
-		DataTpl:       component.DataTpl,
-		DataExample:   component.DataExample,
+func ToHtmlComponent(component Component) htmlcomponent.ComponentTemplate {
+	return htmlcomponent.ComponentTemplate{
+		Name:         component.ComponentName,
+		Template:     component.Template,
+		PropsSchema:  component.DataTpl,
+		PropsExample: component.DataExample,
 	}
 }
 
-func ToHtmlComponents(components ...Component) htmlcomponent.Components {
-	return memorytable.Map(components, func(item Component) htmlcomponent.Component {
+func ToHtmlComponents(components ...Component) htmlcomponent.ComponentTemplates {
+	return memorytable.Map(components, func(item Component) htmlcomponent.ComponentTemplate {
 		return ToHtmlComponent(item)
 	})
 }

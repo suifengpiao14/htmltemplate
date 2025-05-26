@@ -7,15 +7,15 @@ import (
 )
 
 func TestComponent(t *testing.T) {
-	component := htmlcomponent.Component{
-		ComponentName: "xyxzapi/index",
+	component := htmlcomponent.ComponentTemplate{
+		Name: "xyxzapi/index",
 		Template: `
 		<div class="flex flex-col w-full ">
 		背景色-黄色
 		<suifengpiao14:tab config="orderTypeTab" />
 		</div>
 		`,
-		DataTpl: `
+		PropsSchema: `
 	{
 		"orderTypeTab":{
 				"namespace":"orderTypeTab",

@@ -13,9 +13,9 @@ var allComponent = htmlcomponent.AllComponent
 var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 
 	{
-		ParentNodeID:  "xyxzapi/index",
-		ComponentName: "xyxzapi/orderListItem",
-		NodeID:        "arriveShop_OrderItems",
+		ParentNodeID: "xyxzapi/index",
+		TemplateName: "xyxzapi/orderListItem",
+		NodeID:       "arriveShop_OrderItems",
 		Props: `{
 		"namespace":"arriveShop",
 		"orders":[{
@@ -43,9 +43,9 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 		]}`, // 这里用的是上面定义的orderTypeTab的变量
 	},
 	{
-		ParentNodeID:  "xyxzapi/index",
-		ComponentName: "xyxzapi/orderListItem",
-		NodeID:        "arriveHome_orderItems",
+		ParentNodeID: "xyxzapi/index",
+		TemplateName: "xyxzapi/orderListItem",
+		NodeID:       "arriveHome_orderItems",
 		Props: `{
 		"namespace":"arriveHome",
 		"orders":[{
@@ -73,30 +73,30 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 		]}`, // 这里用的是上面定义的orderTypeTab的变量
 	},
 	{
-		ParentNodeID:  "xyxzapi/index",
-		ComponentName: "suifengpiao14/container",
-		NodeID:        "arriveShopContent",
+		ParentNodeID: "xyxzapi/index",
+		TemplateName: "suifengpiao14/container",
+		NodeID:       "arriveShopContent",
 		Props: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveShop_OrderItemsOutput}}}"]
 		}`,
 	},
 	{
-		ParentNodeID:  "xyxzapi/index",
-		ComponentName: "suifengpiao14/container",
-		NodeID:        "arriveHomeContent",
+		ParentNodeID: "xyxzapi/index",
+		TemplateName: "suifengpiao14/container",
+		NodeID:       "arriveHomeContent",
 		Props: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveHome_orderItemsOutput}}}"]
 		}`,
 	},
 	{
-		ParentNodeID:  "xyxzapi/index",
-		ComponentName: "xyxzapi/orderToolbar",
-		NodeID:        "toolbar",
+		ParentNodeID: "xyxzapi/index",
+		TemplateName: "xyxzapi/orderToolbar",
+		NodeID:       "toolbar",
 	},
 	{
-		ParentNodeID:  "xyxzapi/index",
-		ComponentName: "suifengpiao14/tab",
-		NodeID:        "orderTypeTab",
+		ParentNodeID: "xyxzapi/index",
+		TemplateName: "suifengpiao14/tab",
+		NodeID:       "orderTypeTab",
 		Props: `{
 				"namespace":"orderTypeTab",
 				"eventName":"",
@@ -108,9 +108,9 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 	}`,
 	},
 	{
-		ParentNodeID:  "xyxzapi/index",
-		ComponentName: "xyxzapi/index",
-		NodeID:        "index",
+		ParentNodeID: "xyxzapi/index",
+		TemplateName: "xyxzapi/index",
+		NodeID:       "index",
 		Props: `{
 	"orderTypeTab":"{{{orderTypeTabOutput}}}"
 	}`,
@@ -166,13 +166,13 @@ func TestRanderTable(t *testing.T) {
 	rootComponentName := "html/component"
 	var TestHtmlComponentIndexAssembles = htmlcomponent.ComponentNodes{
 		{
-			ParentNodeID:  "html/component",
-			ComponentName: "suifengpiao14/table",
-			NodeID:        "table",
+			ParentNodeID: "html/component",
+			TemplateName: "suifengpiao14/table",
+			NodeID:       "table",
 		},
 		{
-			ParentNodeID:  "test/htmlComponent",
-			ComponentName: "suifengpiao14/tab",
+			ParentNodeID: "test/htmlComponent",
+			TemplateName: "suifengpiao14/tab",
 		},
 	}
 
@@ -198,9 +198,9 @@ func TestRanderSubPage(t *testing.T) {
 
 	var TestHtmlComponentIndexAssembles = htmlcomponent.ComponentNodes{
 		{
-			ParentNodeID:  "html/component",
-			ComponentName: "suifengpiao14/table",
-			NodeID:        "table",
+			ParentNodeID: "html/component",
+			TemplateName: "suifengpiao14/table",
+			NodeID:       "table",
 			Props: `
 			<headers>
 			<column>name</column>
@@ -242,8 +242,8 @@ func TestRanderSubPage(t *testing.T) {
 			`,
 		},
 		{
-			ParentNodeID:  "test/htmlComponent",
-			ComponentName: "suifengpiao14/tab",
+			ParentNodeID: "test/htmlComponent",
+			TemplateName: "suifengpiao14/tab",
 		},
 	}
 

@@ -1,52 +1,45 @@
 package htmlcomponent
 
 import (
-	"strings"
-
 	"github.com/pkg/errors"
-	"github.com/suifengpiao14/htmltemplate/htmlenhance"
-	"github.com/suifengpiao14/htmltemplate/xmldata"
+	"github.com/spf13/cast"
 )
 
 type Component struct {
-	ComponentName string `json:"componentName"`
-	Template      string `json:"template"`
-	DataTpl       string `json:"dataTpl"`
-	DataExample   string `json:"dataExample"` // 示例数据，用于调试
+	Name       string
+	Nodes      ComponentNodes
+	Templates  ComponentTemplates
+	Attributes Attributes
 }
 
-func (c Component) Render(data map[string]any) (html string, err error) {
-	newData, err := c.DecodeData(data)
+func NewComponentTree(name string, assembles ComponentNodes, components ComponentTemplates, attributes Attributes) *Component {
+	return &Component{
+		Name:       name,
+		Nodes:      assembles,
+		Templates:  components,
+		Attributes: attributes,
+	}
+}
+
+func (p Component) ToHtml(data map[string]any) (rootComponentHtml string, err error) {
+	rootComponentName := p.Name
+	assembles := p.Nodes
+	components := p.Templates
+
+	attrs := p.Attributes
+	data = MergeMap(attrs.MapData(), data)
+	variables, err := assembles.RenderComponent(components, data)
 	if err != nil {
 		return "", err
 	}
-	html, err = htmlenhance.RenderHtmlTpl(c.Template, newData)
+
+	rootAssembles := assembles.GetByComponentName(rootComponentName)
+	first, err := rootAssembles.First()
 	if err != nil {
+		err = errors.WithMessagef(err, "componentName(same as rootComponentName):%s", rootComponentName)
 		return "", err
 	}
-	html, err = htmlenhance.MergeClassAttrs(html)
-	if err != nil {
-		return "", err
-	}
-	return html, nil
-}
-
-func (c Component) DecodeData(data map[string]any) (newData map[string]any, err error) {
-	newData, err = xmldata.DecodeTplData([]byte(c.DataTpl), data)
-	if err != nil {
-		return nil, errors.Wrap(err, "Component.DecodeData")
-	}
-	newData = MergeMap(data, newData)
-	return newData, nil
-}
-
-type Components []Component
-
-func (cs Components) GetByName(name string) (c *Component, ok bool) {
-	for _, c := range cs {
-		if strings.EqualFold(c.ComponentName, name) {
-			return &c, true
-		}
-	}
-	return nil, false
+	val := variables[first.GetOutputKey()]
+	rootComponentHtml = cast.ToString(val)
+	return rootComponentHtml, nil
 }

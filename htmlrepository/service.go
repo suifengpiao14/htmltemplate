@@ -36,7 +36,7 @@ func (s HtmlTemplateApiService) Render(componentRootName string, data map[string
 	return rootComponentHtml, nil
 }
 
-func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComponentHtml htmlcomponent.ComponentTree, err error) {
+func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComponentHtml htmlcomponent.Component, err error) {
 	assembles, err := s.assembleService.ListByRootComponentName(componentRootName, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
@@ -56,8 +56,8 @@ func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComp
 	if err != nil {
 		return rootComponentHtml, err
 	}
-	rootComponentHtml.ComponentNodes = ToHtmlAssembles(assembles...)
-	componentNames := rootComponentHtml.ComponentNodes.ComponentNames()
+	rootComponentHtml.Nodes = ToHtmlAssembles(assembles...)
+	componentNames := rootComponentHtml.Nodes.ComponentNames()
 	componentNames = append(componentNames, componentRootName)
 	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
 	components, err := s.componentService.ListByComponentNames(componentNames, func(listParam *sqlbuilder.ListParam) {
@@ -78,7 +78,7 @@ func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComp
 	if err != nil {
 		return rootComponentHtml, err
 	}
-	rootComponentHtml.Components = ToHtmlComponents(components...)
+	rootComponentHtml.Templates = ToHtmlComponents(components...)
 	attrs, err := s.attributeService.ListByRootComponentName(componentRootName, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {

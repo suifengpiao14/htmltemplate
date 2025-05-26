@@ -11,13 +11,13 @@ import (
 )
 
 type ComponentNode struct {
-	ParentNodeID string `json:"rootComponentName"`
-
-	ComponentName string   `json:"componentName"`
-	NodeID        string   `json:"assembleName"`
-	Props         string   `json:"props"`
-	DataExample   string   `json:"dataExample"`
-	dependences   []string //依赖组件(所有的input key)
+	ParentNodeID string            `json:"parentNodeId"`
+	TemplateName string            `json:"templateName"`
+	NodeID       string            `json:"nodeId"`
+	Props        string            `json:"props"`      // 包含Attributes 变量
+	Attributes   map[string]string `json:"attributes"` // 属性
+	DataExample  string            `json:"dataExample"`
+	dependences  []string          //依赖组件(所有的input key)
 
 }
 
@@ -123,7 +123,7 @@ func (as ComponentNodes) Filter(filterFn func(a ComponentNode) bool) (subAssembl
 }
 func (as ComponentNodes) GetByComponentName(componentName string) (assemble ComponentNodes) {
 	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
-		return a.ComponentName == componentName
+		return a.TemplateName == componentName
 	}).ToSlice()
 	return rows
 
@@ -141,7 +141,7 @@ func (as ComponentNodes) GetByAssembleName(assembleName string) (assemble *Compo
 func (as ComponentNodes) ComponentNames() (componentNames []string) {
 	componentNames = make([]string, 0)
 	for _, a := range as {
-		componentNames = append(componentNames, a.ComponentName)
+		componentNames = append(componentNames, a.TemplateName)
 	}
 	componentNames = memorytable.NewTable(componentNames...).FilterEmpty().Uniqueue(func(row string) (key string) {
 		return row
@@ -186,11 +186,11 @@ func (as ComponentNodes) resolveDependence() (ordered ComponentNodes) {
 	return ordered
 }
 
-func (as ComponentNodes) RenderComponent(cs Components, data map[string]any) (segments map[string]any, err error) {
+func (as ComponentNodes) RenderComponent(cs ComponentTemplates, data map[string]any) (segments map[string]any, err error) {
 	segments = make(map[string]any, 0)
 	ordered := as.resolveDependence()
 	for _, r := range ordered {
-		c, ok := cs.GetByName(r.ComponentName)
+		c, ok := cs.GetByName(r.TemplateName)
 		if !ok {
 			continue
 		}
@@ -207,7 +207,7 @@ func (as ComponentNodes) RenderComponent(cs Components, data map[string]any) (se
 		}
 		html, err := c.Render(templateData)
 		if err != nil {
-			return nil, errors.WithMessagef(err, "render component %s error", c.ComponentName)
+			return nil, errors.WithMessagef(err, "render component %s error", c.Name)
 		}
 		segments[r.GetOutputKey()] = html
 	}

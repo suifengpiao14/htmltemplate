@@ -7,20 +7,20 @@ import (
 	"github.com/suifengpiao14/funcs"
 )
 
-var XyxzapiPageIndex = Component{
-	ComponentName: "xyxzapi/index",
+var XyxzapiPageIndex = ComponentTemplate{
+	Name: "xyxzapi/index",
 	Template: `
 		<div class="flex flex-col w-full ">
 		背景色-黄色
 		{{{orderTypeTab}}}
 		</div>
 `,
-	DataTpl: `
+	PropsSchema: `
 	<orderTypeTab>{{{orderTypeTab}}}</orderTypeTab>`,
 }
 
-var XyxzOrderToolbar = Component{
-	ComponentName: "xyxzapi/orderToolbar",
+var XyxzOrderToolbar = ComponentTemplate{
+	Name: "xyxzapi/orderToolbar",
 	Template: `
 <div class="flex flex-row w-full ">
 <div>手动建单</div>
@@ -29,11 +29,11 @@ var XyxzOrderToolbar = Component{
 <div>收款</div>
 </div>
 `,
-	DataTpl: ``,
+	PropsSchema: ``,
 }
 
-var Container = Component{
-	ComponentName: "suifengpiao14/container",
+var Container = ComponentTemplate{
+	Name: "suifengpiao14/container",
 	Template: `
 	<div>
 	{{#children}}
@@ -41,7 +41,7 @@ var Container = Component{
 	{{/children}}
 	</div>
 	`,
-	DataTpl: `
+	PropsSchema: `
 	{{#children}}
 		<children>
 			{{{.}}}
@@ -50,8 +50,8 @@ var Container = Component{
 	`,
 }
 
-var XyxzOrderListItem = Component{
-	ComponentName: "xyxzapi/orderListItem",
+var XyxzOrderListItem = ComponentTemplate{
+	Name: "xyxzapi/orderListItem",
 	Template: `
 	{{#orders}}
 	<div data-fullname="{{namespace}}/orders-item">
@@ -72,7 +72,7 @@ var XyxzOrderListItem = Component{
 </div>
 {{/orders}}
 `,
-	DataTpl: `
+	PropsSchema: `
 	{{#orders}}
 		<orders>
 			<orderType>{{orderType}}</orderType>
@@ -87,7 +87,7 @@ var XyxzOrderListItem = Component{
 		</orders>
 	{{/orders}}
 `,
-	DataExample: `
+	PropsExample: `
 		{
 			"orders": [
 				{
@@ -106,8 +106,8 @@ var XyxzOrderListItem = Component{
 `,
 }
 
-var TabComponent = Component{
-	ComponentName: "suifengpiao14/tab",
+var TabComponent = ComponentTemplate{
+	Name: "suifengpiao14/tab",
 	Template: `
 	 	<div data-fullname="{{namespace}}/tab" role="tablist" class="tabs tabs-bordered "
 		x-data='$tab({"tab_eventName":"{{eventName}}","tab_activeTabId":"{{activeTabId}}"})'>
@@ -127,7 +127,7 @@ var TabComponent = Component{
 		</div>
 	</div>
 	 `,
-	DataTpl: `
+	PropsSchema: `
 	<namespace>{{namespace}}</namespace>
 	<eventName>{{eventName}}</eventName>
 	<activeTabId>{{activeTabId}}</activeTabId>
@@ -141,8 +141,8 @@ var TabComponent = Component{
 	`,
 }
 
-var TableComponent = Component{
-	ComponentName: "suifengpiao14/table",
+var TableComponent = ComponentTemplate{
+	Name: "suifengpiao14/table",
 	Template: `
 	<table class="min-w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
             <thead class="bg-indigo-600 text-white">
@@ -163,7 +163,7 @@ var TableComponent = Component{
                 {{/rows}}
             </tbody>
         </table>`,
-	DataTpl: `
+	PropsSchema: `
 	{{#headers}}
 	<headers>
 		<column>{{{column}}}</column>
@@ -183,7 +183,7 @@ var TableComponent = Component{
 	</rows>
 	{{/rows}}
 `,
-	DataExample: `
+	PropsExample: `
 {
 	"headers": [
 		{"column":"id","title":"ID"},
@@ -199,8 +199,8 @@ var TableComponent = Component{
 `,
 }
 
-var SearchFormComponent = Component{
-	ComponentName: "suifengpiao14/searchForm",
+var SearchFormComponent = ComponentTemplate{
+	Name: "suifengpiao14/searchForm",
 	Template: `
  <form hx-post="{{hxpost}}" hx-target="{{hxtarget}}" hx-ext="json-enc-custom"
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 bg-white rounded-lg shadow-md">
@@ -242,7 +242,7 @@ var SearchFormComponent = Component{
         </div>
     </form>
 	`,
-	DataTpl: `
+	PropsSchema: `
 	<hxpost>{{{hxpost}}}</hxpost>
 	<hxtarget>{{{hxtarget}}}</hxtarget>
         {{#hiddenFields}}
@@ -276,8 +276,8 @@ var SearchFormComponent = Component{
 `,
 }
 
-var HtmlDocumentComponent = Component{
-	ComponentName: "suifengpiao14/htmlDocument",
+var HtmlDocumentComponent = ComponentTemplate{
+	Name: "suifengpiao14/htmlDocument",
 	Template: `
 	<!DOCTYPE html>
 <html lang="en">
@@ -306,7 +306,7 @@ var HtmlDocumentComponent = Component{
 </body>
 </html>
 	`,
-	DataTpl: `
+	PropsSchema: `
 	{{#metaList}}
 	<metaList>{{{.}}}</metaList>
 	{{/metaList}}
@@ -324,7 +324,7 @@ var HtmlDocumentComponent = Component{
 	<inlineScript>{{{inlineScript}}}</inlineScript>
 	<content>{{{content}}}</content>
 	`,
-	DataExample: `
+	PropsExample: `
 	{
 		"title":"html文档标题",
 		"metaList":[
@@ -346,9 +346,9 @@ var HtmlDocumentComponent = Component{
 	`,
 }
 
-var HtmxAlpinejsPageComponent = Component{}
+var HtmxAlpinejsPageComponent = ComponentTemplate{}
 
-var AllComponent = Components{
+var AllComponent = ComponentTemplates{
 	TabComponent,
 	XyxzapiPageIndex,
 	XyxzOrderListItem,
