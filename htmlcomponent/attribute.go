@@ -17,8 +17,8 @@ import (
 */
 
 type Attribute struct {
-	TagID          string `json:"tagId"`  // html标签id
-	NodeID         string `json:"nodeId"` // component node id(同一个template 在一个组件中可能用于多次,比如按钮-确定/取消按钮,所以需要携带NodeId区分不同节点)
+	TagId          string `json:"tagId"`  // html标签id
+	NodeId         string `json:"nodeId"` // component node id(同一个template 在一个组件中可能用于多次,比如按钮-确定/取消按钮,所以需要携带NodeId区分不同节点)
 	AttributeName  string `json:"key"`
 	AttributeValue string `json:"value"`
 	sort           int
@@ -38,21 +38,21 @@ type Attributes []Attribute
 func (as Attributes) MapData() (attrMap map[string]any) {
 	attrMap = make(map[string]any)
 	for _, a := range as {
-		attrMap[htmlenhance.AttrPlaceholderName(a.TagID)] = as.GetByTagID(a.TagID).String()
+		attrMap[htmlenhance.AttrPlaceholderName(a.TagId)] = as.GetByTagID(a.TagId).String()
 	}
 	return attrMap
 }
 
 func (as Attributes) GetByTagID(TagId string) Attributes {
 	attrs := memorytable.NewTable(as...).Where(func(record Attribute) bool {
-		return record.TagID == TagId
+		return record.TagId == TagId
 	})
 	return attrs.ToSlice()
 }
 
 func (as Attributes) GetByNodeID(nodeId string) Attributes {
 	attrs := memorytable.NewTable(as...).Where(func(record Attribute) bool {
-		return record.NodeID == nodeId
+		return record.NodeId == nodeId
 	})
 	return attrs.ToSlice()
 }
@@ -121,7 +121,7 @@ func (as *Attributes) ResetByKey(newAttr Attribute) {
 }
 
 func (a *Attributes) Append(attrs ...Attribute) {
-	tmp := memorytable.NewTable(*a...).Set(func(t Attribute) (identity string) { return t.TagID }, attrs...)
+	tmp := memorytable.NewTable(*a...).Set(func(t Attribute) (identity string) { return t.TagId }, attrs...)
 	*a = Attributes(tmp)
 }
 

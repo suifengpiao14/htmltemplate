@@ -22,6 +22,7 @@ type Assemble struct {
 }
 
 type Attribute struct {
+	TagId          string `gorm:"column:tagId" json:"tagId"`
 	NodeId         string `gorm:"column:nodeId" json:"nodeId"`
 	AttributeName  string `gorm:"column:attributeName" json:"key"`
 	AttributeValue string `gorm:"column:attributeValue" json:"value"`
@@ -45,7 +46,8 @@ func ToHtmlAssembles(assembles ...Assemble) htmlcomponent.ComponentNodes {
 
 func ToHtmlAttribute(attribute Attribute) htmlcomponent.Attribute {
 	return htmlcomponent.Attribute{
-		TagID:          attribute.NodeId,
+		TagId:          attribute.TagId,
+		NodeId:         attribute.NodeId,
 		AttributeName:  attribute.AttributeName,
 		AttributeValue: attribute.AttributeValue,
 	}

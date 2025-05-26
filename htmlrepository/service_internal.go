@@ -118,7 +118,7 @@ func newAttributeService[R any](tableConfig sqlbuilder.TableConfig) AttributeSer
 
 func (s AttributeService[R]) Set(attribute Attribute, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
-		NewNodeIdField(attribute.NodeId).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewNodeIdField(attribute.TagId).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewAttributeNameField(attribute.AttributeName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewAttributeValueField(attribute.AttributeValue),
 	}
@@ -148,7 +148,7 @@ func (s AttributeService[R]) Delete(attribute Attribute, customFn sqlbuilder.Cus
 		return err
 	}
 	fields := sqlbuilder.Fields{
-		NewNodeIdField(attribute.NodeId).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewNodeIdField(attribute.TagId).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewAttributeNameField(attribute.AttributeName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
 	err = s.RepositoryCommand.Delete(fields, customFn)
