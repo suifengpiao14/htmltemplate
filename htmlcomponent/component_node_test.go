@@ -10,13 +10,13 @@ import (
 )
 
 var allComponent = htmlcomponent.AllComponent
-var xyxzApiIndexAssembles = htmlcomponent.Assembles{
+var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 
 	{
-		RootComponentName: "xyxzapi/index",
-		ComponentName:     "xyxzapi/orderListItem",
-		AssembleName:      "arriveShop_OrderItems",
-		DataTpl: `{
+		ParentNodeID:  "xyxzapi/index",
+		ComponentName: "xyxzapi/orderListItem",
+		NodeID:        "arriveShop_OrderItems",
+		Props: `{
 		"namespace":"arriveShop",
 		"orders":[{
 		"orderType":"黄金到店",
@@ -43,10 +43,10 @@ var xyxzApiIndexAssembles = htmlcomponent.Assembles{
 		]}`, // 这里用的是上面定义的orderTypeTab的变量
 	},
 	{
-		RootComponentName: "xyxzapi/index",
-		ComponentName:     "xyxzapi/orderListItem",
-		AssembleName:      "arriveHome_orderItems",
-		DataTpl: `{
+		ParentNodeID:  "xyxzapi/index",
+		ComponentName: "xyxzapi/orderListItem",
+		NodeID:        "arriveHome_orderItems",
+		Props: `{
 		"namespace":"arriveHome",
 		"orders":[{
 		"orderType":"黄金上门",
@@ -73,31 +73,31 @@ var xyxzApiIndexAssembles = htmlcomponent.Assembles{
 		]}`, // 这里用的是上面定义的orderTypeTab的变量
 	},
 	{
-		RootComponentName: "xyxzapi/index",
-		ComponentName:     "suifengpiao14/container",
-		AssembleName:      "arriveShopContent",
-		DataTpl: `{
+		ParentNodeID:  "xyxzapi/index",
+		ComponentName: "suifengpiao14/container",
+		NodeID:        "arriveShopContent",
+		Props: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveShop_OrderItemsOutput}}}"]
 		}`,
 	},
 	{
-		RootComponentName: "xyxzapi/index",
-		ComponentName:     "suifengpiao14/container",
-		AssembleName:      "arriveHomeContent",
-		DataTpl: `{
+		ParentNodeID:  "xyxzapi/index",
+		ComponentName: "suifengpiao14/container",
+		NodeID:        "arriveHomeContent",
+		Props: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveHome_orderItemsOutput}}}"]
 		}`,
 	},
 	{
-		RootComponentName: "xyxzapi/index",
-		ComponentName:     "xyxzapi/orderToolbar",
-		AssembleName:      "toolbar",
+		ParentNodeID:  "xyxzapi/index",
+		ComponentName: "xyxzapi/orderToolbar",
+		NodeID:        "toolbar",
 	},
 	{
-		RootComponentName: "xyxzapi/index",
-		ComponentName:     "suifengpiao14/tab",
-		AssembleName:      "orderTypeTab",
-		DataTpl: `{
+		ParentNodeID:  "xyxzapi/index",
+		ComponentName: "suifengpiao14/tab",
+		NodeID:        "orderTypeTab",
+		Props: `{
 				"namespace":"orderTypeTab",
 				"eventName":"",
 				"activeTabId":"arrive_shop",
@@ -108,10 +108,10 @@ var xyxzApiIndexAssembles = htmlcomponent.Assembles{
 	}`,
 	},
 	{
-		RootComponentName: "xyxzapi/index",
-		ComponentName:     "xyxzapi/index",
-		AssembleName:      "index",
-		DataTpl: `{
+		ParentNodeID:  "xyxzapi/index",
+		ComponentName: "xyxzapi/index",
+		NodeID:        "index",
+		Props: `{
 	"orderTypeTab":"{{{orderTypeTabOutput}}}"
 	}`,
 	},
@@ -164,15 +164,15 @@ func TestGetDependence(t *testing.T) {
 
 func TestRanderTable(t *testing.T) {
 	rootComponentName := "html/component"
-	var TestHtmlComponentIndexAssembles = htmlcomponent.Assembles{
+	var TestHtmlComponentIndexAssembles = htmlcomponent.ComponentNodes{
 		{
-			RootComponentName: "html/component",
-			ComponentName:     "suifengpiao14/table",
-			AssembleName:      "table",
+			ParentNodeID:  "html/component",
+			ComponentName: "suifengpiao14/table",
+			NodeID:        "table",
 		},
 		{
-			RootComponentName: "test/htmlComponent",
-			ComponentName:     "suifengpiao14/tab",
+			ParentNodeID:  "test/htmlComponent",
+			ComponentName: "suifengpiao14/tab",
 		},
 	}
 
@@ -196,12 +196,12 @@ type userInfo struct {
 
 func TestRanderSubPage(t *testing.T) {
 
-	var TestHtmlComponentIndexAssembles = htmlcomponent.Assembles{
+	var TestHtmlComponentIndexAssembles = htmlcomponent.ComponentNodes{
 		{
-			RootComponentName: "html/component",
-			ComponentName:     "suifengpiao14/table",
-			AssembleName:      "table",
-			DataTpl: `
+			ParentNodeID:  "html/component",
+			ComponentName: "suifengpiao14/table",
+			NodeID:        "table",
+			Props: `
 			<headers>
 			<column>name</column>
 			<title>姓名</title>
@@ -242,8 +242,8 @@ func TestRanderSubPage(t *testing.T) {
 			`,
 		},
 		{
-			RootComponentName: "test/htmlComponent",
-			ComponentName:     "suifengpiao14/tab",
+			ParentNodeID:  "test/htmlComponent",
+			ComponentName: "suifengpiao14/tab",
 		},
 	}
 

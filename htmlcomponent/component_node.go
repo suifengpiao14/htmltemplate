@@ -10,22 +10,22 @@ import (
 	"github.com/suifengpiao14/memorytable"
 )
 
-type Assemble struct {
-	RootComponentName string `json:"rootComponentName"`
+type ComponentNode struct {
+	ParentNodeID string `json:"rootComponentName"`
 
 	ComponentName string   `json:"componentName"`
-	AssembleName  string   `json:"assembleName"`
-	DataTpl       string   `json:"dataTpl"`
+	NodeID        string   `json:"assembleName"`
+	Props         string   `json:"props"`
 	DataExample   string   `json:"dataExample"`
 	dependences   []string //依赖组件(所有的input key)
 
 }
 
-func (r Assemble) GetInputKey() string {
-	return fmt.Sprintf(`%sInput`, r.AssembleName)
+func (r ComponentNode) GetInputKey() string {
+	return fmt.Sprintf(`%sInput`, r.NodeID)
 }
-func (r Assemble) GetOutputKey() string {
-	return fmt.Sprintf(`%sOutput`, r.AssembleName)
+func (r ComponentNode) GetOutputKey() string {
+	return fmt.Sprintf(`%sOutput`, r.NodeID)
 }
 
 func replacePlaceholder(s string, data map[string]any) any {
@@ -63,8 +63,8 @@ func ReplacePlaceholder(jsonPlaceholder any, data map[string]any) (newData any) 
 	return jsonPlaceholder
 }
 
-func (r Assemble) DecodeData(data map[string]any) (newData map[string]any, err error) {
-	newData, err = xmldata.DecodeTplData([]byte(r.DataTpl), data)
+func (r ComponentNode) DecodeData(data map[string]any) (newData map[string]any, err error) {
+	newData, err = xmldata.DecodeTplData([]byte(r.Props), data)
 	if err != nil {
 		return nil, errors.Wrap(err, "Assemble.DecodeData")
 	}
@@ -72,14 +72,14 @@ func (r Assemble) DecodeData(data map[string]any) (newData map[string]any, err e
 	return newData, nil
 }
 
-func (r Assemble) GetDependence() (dependences []string) {
+func (r ComponentNode) GetDependence() (dependences []string) {
 	dependences = make([]string, 0)
-	if r.DataTpl == "" {
+	if r.Props == "" {
 		dependences = memorytable.NewTable(dependences...).FilterEmpty()
 		return dependences
 	}
 	regexp := regexp.MustCompile(`\{\{\{?([\w\.\-]+)\}\}\}?`)
-	matches := regexp.FindAllStringSubmatch(r.DataTpl, -1)
+	matches := regexp.FindAllStringSubmatch(r.Props, -1)
 	for _, match := range matches {
 		assembleName := strings.TrimSuffix(match[1], "Output")
 		assembleName = strings.TrimSuffix(assembleName, "Input")
@@ -96,11 +96,11 @@ func (r Assemble) GetDependence() (dependences []string) {
 // 	return r.GetOutputKey(), value
 // }
 
-type Assembles []Assemble
+type ComponentNodes []ComponentNode
 
 var Error_not_found = errors.New("not found")
 
-func (as Assembles) First() (assemble Assemble, err error) {
+func (as ComponentNodes) First() (assemble ComponentNode, err error) {
 	if len(as) == 0 {
 		return assemble, Error_not_found
 	}
@@ -109,36 +109,36 @@ func (as Assembles) First() (assemble Assemble, err error) {
 
 }
 
-func (as Assembles) FilterByRootComponentName(RootComponentName string) (onePageAssembles Assembles) {
-	rows := memorytable.NewTable(as...).Where(func(a Assemble) bool {
-		return a.RootComponentName == RootComponentName
+func (as ComponentNodes) FilterByRootComponentName(RootComponentName string) (onePageAssembles ComponentNodes) {
+	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
+		return a.ParentNodeID == RootComponentName
 	}).ToSlice()
 	return rows
 }
-func (as Assembles) Filter(filterFn func(a Assemble) bool) (subAssembles Assembles) {
-	rows := memorytable.NewTable(as...).Where(func(a Assemble) bool {
+func (as ComponentNodes) Filter(filterFn func(a ComponentNode) bool) (subAssembles ComponentNodes) {
+	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
 		return filterFn(a)
 	}).ToSlice()
 	return rows
 }
-func (as Assembles) GetByComponentName(componentName string) (assemble Assembles) {
-	rows := memorytable.NewTable(as...).Where(func(a Assemble) bool {
+func (as ComponentNodes) GetByComponentName(componentName string) (assemble ComponentNodes) {
+	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
 		return a.ComponentName == componentName
 	}).ToSlice()
 	return rows
 
 }
 
-func (as Assembles) GetByAssembleName(assembleName string) (assemble *Assemble, index int) {
+func (as ComponentNodes) GetByAssembleName(assembleName string) (assemble *ComponentNode, index int) {
 	for i, relation := range as {
-		if relation.AssembleName == assembleName {
+		if relation.NodeID == assembleName {
 			return &relation, i
 		}
 	}
 	return nil, -1
 }
 
-func (as Assembles) ComponentNames() (componentNames []string) {
+func (as ComponentNodes) ComponentNames() (componentNames []string) {
 	componentNames = make([]string, 0)
 	for _, a := range as {
 		componentNames = append(componentNames, a.ComponentName)
@@ -149,23 +149,23 @@ func (as Assembles) ComponentNames() (componentNames []string) {
 	return componentNames
 }
 
-func (as *Assembles) Insert(a Assemble, index int) {
+func (as *ComponentNodes) Insert(a ComponentNode, index int) {
 	tmp := memorytable.NewTable(*as...).Insert(a, index)
-	*as = Assembles(tmp)
+	*as = ComponentNodes(tmp)
 }
 
-func (as *Assembles) InsertBefore(a Assemble, index int) {
+func (as *ComponentNodes) InsertBefore(a ComponentNode, index int) {
 	as.Insert(a, index-1)
 }
 
 // resolveDependence 解析依赖关系，根据组件依赖的变量,以及组件的PlaceHolder,决定渲染顺序
-func (as Assembles) resolveDependence() (ordered Assembles) {
-	ordered = make(Assembles, 0)
+func (as ComponentNodes) resolveDependence() (ordered ComponentNodes) {
+	ordered = make(ComponentNodes, 0)
 	maxIndex := len(as)
 	// 构建依赖映射
 	for _, a := range as {
 		a.dependences = a.GetDependence()
-		_, aIndex := ordered.GetByAssembleName(a.AssembleName)
+		_, aIndex := ordered.GetByAssembleName(a.NodeID)
 		if aIndex < 0 {
 			aIndex = maxIndex // 默认增加到最后
 		}
@@ -186,7 +186,7 @@ func (as Assembles) resolveDependence() (ordered Assembles) {
 	return ordered
 }
 
-func (as Assembles) RenderComponent(cs Components, data map[string]any) (segments map[string]any, err error) {
+func (as ComponentNodes) RenderComponent(cs Components, data map[string]any) (segments map[string]any, err error) {
 	segments = make(map[string]any, 0)
 	ordered := as.resolveDependence()
 	for _, r := range ordered {

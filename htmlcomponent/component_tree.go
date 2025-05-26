@@ -5,25 +5,25 @@ import (
 	"github.com/spf13/cast"
 )
 
-type RootComponent struct {
-	Name       string
-	Assembles  Assembles
-	Components Components
-	Attributes Attributes
+type ComponentTree struct {
+	Name           string
+	ComponentNodes ComponentNodes
+	Components     Components
+	Attributes     Attributes
 }
 
-func NewRootComponent(name string, assembles Assembles, components Components, attributes Attributes) *RootComponent {
-	return &RootComponent{
-		Name:       name,
-		Assembles:  assembles,
-		Components: components,
-		Attributes: attributes,
+func NewComponentTree(name string, assembles ComponentNodes, components Components, attributes Attributes) *ComponentTree {
+	return &ComponentTree{
+		Name:           name,
+		ComponentNodes: assembles,
+		Components:     components,
+		Attributes:     attributes,
 	}
 }
 
-func (p RootComponent) ToHtml(data map[string]any) (rootComponentHtml string, err error) {
+func (p ComponentTree) ToHtml(data map[string]any) (rootComponentHtml string, err error) {
 	rootComponentName := p.Name
-	assembles := p.Assembles
+	assembles := p.ComponentNodes
 	components := p.Components
 
 	attrs := p.Attributes

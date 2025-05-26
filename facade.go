@@ -9,7 +9,7 @@ var SetNodeIdAndAttrHolder = htmlenhance.SetNodeIdAndAttrHolder
 var MergeClassAttrs = htmlenhance.MergeClassAttrs
 
 type Component = htmlcomponent.Component
-type Assemble = htmlcomponent.Assemble
-type Assembles = htmlcomponent.Assembles
+type Assemble = htmlcomponent.ComponentNode
+type Assembles = htmlcomponent.ComponentNodes
 type Attribute = htmlcomponent.Attribute
 type Attributes = htmlcomponent.Attributes
