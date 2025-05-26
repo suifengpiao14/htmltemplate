@@ -163,18 +163,18 @@ func (as *ComponentNodes) InsertBefore(a ComponentNode, index int) {
 }
 
 // resolveDependence 解析依赖关系，根据组件依赖的变量,以及组件的PlaceHolder,决定渲染顺序
-func (as ComponentNodes) resolveDependence() (ordered ComponentNodes) {
+func (nodes ComponentNodes) resolveDependence() (ordered ComponentNodes) {
 	ordered = make(ComponentNodes, 0)
-	maxIndex := len(as)
+	maxIndex := len(nodes)
 	// 构建依赖映射
-	for _, a := range as {
+	for _, a := range nodes {
 		a.dependences = a.GetDependence()
 		_, aIndex := ordered.GetByNodeId(a.NodeID)
 		if aIndex < 0 {
 			aIndex = maxIndex // 默认增加到最后
 		}
 		for _, dep := range a.dependences {
-			dependence, fullItemsIndex := as.GetByNodeId(dep)
+			dependence, fullItemsIndex := nodes.GetByNodeId(dep)
 			if fullItemsIndex < 0 {
 				continue
 			}
@@ -190,30 +190,32 @@ func (as ComponentNodes) resolveDependence() (ordered ComponentNodes) {
 	return ordered
 }
 
-func (as ComponentNodes) RenderTemplate(cs ComponentTemplates, data map[string]any) (segments map[string]any, err error) {
+func (nodes ComponentNodes) RenderTemplate(cs ComponentTemplates, data map[string]any, attributes Attributes) (segments map[string]any, err error) {
 	segments = make(map[string]any, 0)
-	ordered := as.resolveDependence()
-	for _, r := range ordered {
-		c, ok := cs.GetByName(r.TemplateName)
+	ordered := nodes.resolveDependence()
+	for _, node := range ordered {
+		componentTpl, ok := cs.GetByName(node.TemplateName)
 		if !ok {
 			continue
 		}
-		subData := data[r.GetInputKey()]
+		attrs := attributes.GetByNodeID(node.NodeID)
+		data = MergeMap(attrs.MapData(), data)
+		subData := data[node.GetInputKey()]
 		componentData := make(map[string]any, 0)
 		if subData != nil {
 			componentData = subData.(map[string]any)
 		}
 		componentData = MergeMap(data, componentData, segments) // 用指定key值覆盖data中的同名key值，再合并variables中同名key值,属性的数据只能再最早的data[string]any 中定义，所以必须保留最初的 data 的合并
 
-		templateData, err := r.DecodeData(componentData)
+		templateData, err := node.DecodeData(componentData)
 		if err != nil {
 			return nil, err
 		}
-		html, err := c.Render(templateData)
+		html, err := componentTpl.Render(templateData)
 		if err != nil {
-			return nil, errors.WithMessagef(err, "render component %s error", c.Name)
+			return nil, errors.WithMessagef(err, "render component %s error", componentTpl.Name)
 		}
-		segments[r.GetOutputKey()] = html
+		segments[node.GetOutputKey()] = html
 	}
 	return segments, nil
 }

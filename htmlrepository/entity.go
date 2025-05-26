@@ -45,7 +45,7 @@ func ToHtmlAssembles(assembles ...Assemble) htmlcomponent.ComponentNodes {
 
 func ToHtmlAttribute(attribute Attribute) htmlcomponent.Attribute {
 	return htmlcomponent.Attribute{
-		TagNodeID:      attribute.NodeId,
+		TagID:          attribute.NodeId,
 		AttributeName:  attribute.AttributeName,
 		AttributeValue: attribute.AttributeValue,
 	}

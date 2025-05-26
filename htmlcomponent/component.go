@@ -24,10 +24,7 @@ func (p Component) Render(data map[string]any) (rootComponentHtml string, err er
 	componentName := p.Name
 	nodes := p.Nodes
 	templates := p.Templates
-
-	attrs := p.Attributes
-	data = MergeMap(attrs.MapData(), data)
-	variables, err := nodes.RenderTemplate(templates, data)
+	variables, err := nodes.RenderTemplate(templates, data, p.Attributes)
 	if err != nil {
 		return "", err
 	}
