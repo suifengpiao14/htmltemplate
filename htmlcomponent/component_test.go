@@ -10,8 +10,9 @@ import (
 
 func TestComponent(t *testing.T) {
 	var component = htmlcomponent.Component{
-		Name:  "xyxzapi/index",
-		Nodes: xyxzApiIndexNodes,
+		Name:      "xyxzapi/index",
+		Nodes:     xyxzApiIndexNodes,
+		Templates: allComponent,
 	}
 	data := map[string]any{}
 	html, err := component.Render(data)
