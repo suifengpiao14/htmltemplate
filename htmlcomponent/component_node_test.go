@@ -149,7 +149,7 @@ func TestPage(t *testing.T) {
 			},
 		},
 	}
-	variables, err := as.RenderTemplate(allComponent, allData, nil)
+	variables, err := as.RenderTemplate(allComponent, nil, allData)
 	require.NoError(t, err)
 	indexHtml := variables["indexOutput"]
 	fmt.Println(indexHtml)
@@ -182,7 +182,7 @@ func TestRanderTable(t *testing.T) {
 	allData := map[string]any{
 		"tableInput": rowsMap,
 	}
-	variables, err := as.RenderTemplate(allComponent, allData, nil)
+	variables, err := as.RenderTemplate(allComponent, nil, allData)
 	require.NoError(t, err)
 	indexHtml := variables["tableOutput"]
 	fmt.Println(indexHtml)
@@ -267,7 +267,7 @@ func TestRanderSubPage(t *testing.T) {
 	allData := map[string]any{
 		"tableInput": tableDataMap,
 	}
-	variables, err := as.RenderTemplate(allComponent, allData, nil)
+	variables, err := as.RenderTemplate(allComponent, nil, allData)
 	require.NoError(t, err)
 	indexHtml := variables["tableOutput"]
 	fmt.Println(indexHtml)

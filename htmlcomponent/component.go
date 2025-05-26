@@ -24,7 +24,7 @@ func (p Component) Render(data map[string]any) (rootComponentHtml string, err er
 	componentName := p.Name
 	nodes := p.Nodes
 	templates := p.Templates
-	variables, err := nodes.RenderTemplate(templates, data, p.Attributes)
+	variables, err := nodes.RenderTemplate(templates, p.Attributes, data)
 	if err != nil {
 		return "", err
 	}

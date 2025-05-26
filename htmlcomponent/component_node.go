@@ -190,7 +190,7 @@ func (nodes ComponentNodes) resolveDependence() (ordered ComponentNodes) {
 	return ordered
 }
 
-func (nodes ComponentNodes) RenderTemplate(cs ComponentTemplates, data map[string]any, attributes Attributes) (segments map[string]any, err error) {
+func (nodes ComponentNodes) RenderTemplate(cs ComponentTemplates, attributes Attributes, data map[string]any) (segments map[string]any, err error) {
 	segments = make(map[string]any, 0)
 	ordered := nodes.resolveDependence()
 	for _, node := range ordered {
