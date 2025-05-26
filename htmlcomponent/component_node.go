@@ -11,13 +11,13 @@ import (
 )
 
 type ComponentNode struct {
-	ParentNodeID string            `json:"parentNodeId"`
-	TemplateName string            `json:"templateName"`
-	NodeID       string            `json:"nodeId"`
-	Props        string            `json:"props"`      // 包含Attributes 变量
-	Attributes   map[string]string `json:"attributes"` // 属性
-	DataExample  string            `json:"dataExample"`
-	dependences  []string          //依赖组件(所有的input key)
+	ParentNodeID string   `json:"parentNodeId"`
+	TemplateName string   `json:"templateName"`
+	NodeID       string   `json:"nodeId"`
+	DataTpl      string   `json:"dataTpl"`    // 支持json和xml模板格式
+	Attributes   string   `json:"attributes"` // 属性,json格式
+	DataExample  string   `json:"dataExample"`
+	dependences  []string //依赖组件(所有的input key)
 
 }
 
@@ -64,7 +64,7 @@ func ReplacePlaceholder(jsonPlaceholder any, data map[string]any) (newData any) 
 }
 
 func (r ComponentNode) DecodeData(data map[string]any) (newData map[string]any, err error) {
-	newData, err = xmldata.DecodeTplData([]byte(r.Props), data)
+	newData, err = xmldata.DecodeTplData([]byte(r.DataTpl), data)
 	if err != nil {
 		return nil, errors.Wrap(err, "Assemble.DecodeData")
 	}
@@ -74,12 +74,12 @@ func (r ComponentNode) DecodeData(data map[string]any) (newData map[string]any, 
 
 func (r ComponentNode) GetDependence() (dependences []string) {
 	dependences = make([]string, 0)
-	if r.Props == "" {
+	if r.DataTpl == "" {
 		dependences = memorytable.NewTable(dependences...).FilterEmpty()
 		return dependences
 	}
 	regexp := regexp.MustCompile(`\{\{\{?([\w\.\-]+)\}\}\}?`)
-	matches := regexp.FindAllStringSubmatch(r.Props, -1)
+	matches := regexp.FindAllStringSubmatch(r.DataTpl, -1)
 	for _, match := range matches {
 		assembleName := strings.TrimSuffix(match[1], "Output")
 		assembleName = strings.TrimSuffix(assembleName, "Input")

@@ -9,13 +9,11 @@ import (
 )
 
 type ComponentTemplate struct {
-	Name           string `json:"name"`           //模板唯一标识
-	Template       string `json:"template"`       //HTML 模板内容
-	PropsSchema    string `json:"propsSchema"`    // 需要的数据结构描述
-	AttrbuteSchema string `json:"attrbuteSchema"` // 组件的下元素属性占位符集合(属性/样式 数据量大、维护复杂，从PropsSchema独立，便于专注处理)
-
-	PropsExample     string `json:"propsExample"`      // 示例数据，用于调试
-	AttributeDefault string `json:"attributeDefaults"` // 默认属性值，用于调试
+	Name             string `json:"name"`              //模板唯一标识
+	Template         string `json:"template"`          //HTML 模板内容
+	DataTpl          string `json:"dataTpl"`           // 需要的数据结构描述
+	DataExample      string `json:"dataExample"`       // 示例数据，用于调试
+	AttributeDefault string `json:"attributeDefaults"` // 默认属性值，json 格式
 
 }
 
@@ -36,7 +34,7 @@ func (c ComponentTemplate) Render(data map[string]any) (html string, err error) 
 }
 
 func (c ComponentTemplate) DecodeData(data map[string]any) (newData map[string]any, err error) {
-	newData, err = xmldata.DecodeTplData([]byte(c.PropsSchema), data)
+	newData, err = xmldata.DecodeTplData([]byte(c.DataTpl), data)
 	if err != nil {
 		return nil, errors.Wrap(err, "Component.DecodeData")
 	}

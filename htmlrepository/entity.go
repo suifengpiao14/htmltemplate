@@ -32,7 +32,7 @@ func ToHtmlAssemble(assemble Assemble) htmlcomponent.ComponentNode {
 		ParentNodeID: assemble.RootComponentName,
 		TemplateName: assemble.ComponentName,
 		NodeID:       assemble.AssembleName,
-		Props:        assemble.DataTpl,
+		DataTpl:      assemble.DataTpl,
 		DataExample:  assemble.DataExample,
 	}
 }
@@ -59,10 +59,10 @@ func ToHtmlAttributes(attributes ...Attribute) htmlcomponent.Attributes {
 
 func ToHtmlComponent(component Component) htmlcomponent.ComponentTemplate {
 	return htmlcomponent.ComponentTemplate{
-		Name:         component.ComponentName,
-		Template:     component.Template,
-		PropsSchema:  component.DataTpl,
-		PropsExample: component.DataExample,
+		Name:        component.ComponentName,
+		Template:    component.Template,
+		DataTpl:     component.DataTpl,
+		DataExample: component.DataExample,
 	}
 }
 

@@ -15,7 +15,7 @@ var XyxzapiPageIndex = ComponentTemplate{
 		{{{orderTypeTab}}}
 		</div>
 `,
-	PropsSchema: `
+	DataTpl: `
 	<orderTypeTab>{{{orderTypeTab}}}</orderTypeTab>`,
 }
 
@@ -29,7 +29,7 @@ var XyxzOrderToolbar = ComponentTemplate{
 <div>收款</div>
 </div>
 `,
-	PropsSchema: ``,
+	DataTpl: ``,
 }
 
 var Container = ComponentTemplate{
@@ -41,7 +41,7 @@ var Container = ComponentTemplate{
 	{{/children}}
 	</div>
 	`,
-	PropsSchema: `
+	DataTpl: `
 	{{#children}}
 		<children>
 			{{{.}}}
@@ -72,7 +72,7 @@ var XyxzOrderListItem = ComponentTemplate{
 </div>
 {{/orders}}
 `,
-	PropsSchema: `
+	DataTpl: `
 	{{#orders}}
 		<orders>
 			<orderType>{{orderType}}</orderType>
@@ -87,7 +87,7 @@ var XyxzOrderListItem = ComponentTemplate{
 		</orders>
 	{{/orders}}
 `,
-	PropsExample: `
+	DataExample: `
 		{
 			"orders": [
 				{
@@ -127,7 +127,7 @@ var TabComponent = ComponentTemplate{
 		</div>
 	</div>
 	 `,
-	PropsSchema: `
+	DataTpl: `
 	<namespace>{{namespace}}</namespace>
 	<eventName>{{eventName}}</eventName>
 	<activeTabId>{{activeTabId}}</activeTabId>
@@ -163,7 +163,7 @@ var TableComponent = ComponentTemplate{
                 {{/rows}}
             </tbody>
         </table>`,
-	PropsSchema: `
+	DataTpl: `
 	{{#headers}}
 	<headers>
 		<column>{{{column}}}</column>
@@ -183,7 +183,7 @@ var TableComponent = ComponentTemplate{
 	</rows>
 	{{/rows}}
 `,
-	PropsExample: `
+	DataExample: `
 {
 	"headers": [
 		{"column":"id","title":"ID"},
@@ -242,7 +242,7 @@ var SearchFormComponent = ComponentTemplate{
         </div>
     </form>
 	`,
-	PropsSchema: `
+	DataTpl: `
 	<hxpost>{{{hxpost}}}</hxpost>
 	<hxtarget>{{{hxtarget}}}</hxtarget>
         {{#hiddenFields}}
@@ -306,7 +306,7 @@ var HtmlDocumentComponent = ComponentTemplate{
 </body>
 </html>
 	`,
-	PropsSchema: `
+	DataTpl: `
 	{{#metaList}}
 	<metaList>{{{.}}}</metaList>
 	{{/metaList}}
@@ -324,7 +324,7 @@ var HtmlDocumentComponent = ComponentTemplate{
 	<inlineScript>{{{inlineScript}}}</inlineScript>
 	<content>{{{content}}}</content>
 	`,
-	PropsExample: `
+	DataExample: `
 	{
 		"title":"html文档标题",
 		"metaList":[

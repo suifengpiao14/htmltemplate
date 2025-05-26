@@ -15,7 +15,7 @@ func TestComponent(t *testing.T) {
 		<suifengpiao14:tab config="orderTypeTab" />
 		</div>
 		`,
-		PropsSchema: `
+		DataTpl: `
 	{
 		"orderTypeTab":{
 				"namespace":"orderTypeTab",

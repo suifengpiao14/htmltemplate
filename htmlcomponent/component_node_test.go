@@ -16,7 +16,7 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 		ParentNodeID: "xyxzapi/index",
 		TemplateName: "xyxzapi/orderListItem",
 		NodeID:       "arriveShop_OrderItems",
-		Props: `{
+		DataTpl: `{
 		"namespace":"arriveShop",
 		"orders":[{
 		"orderType":"黄金到店",
@@ -46,7 +46,7 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 		ParentNodeID: "xyxzapi/index",
 		TemplateName: "xyxzapi/orderListItem",
 		NodeID:       "arriveHome_orderItems",
-		Props: `{
+		DataTpl: `{
 		"namespace":"arriveHome",
 		"orders":[{
 		"orderType":"黄金上门",
@@ -76,7 +76,7 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 		ParentNodeID: "xyxzapi/index",
 		TemplateName: "suifengpiao14/container",
 		NodeID:       "arriveShopContent",
-		Props: `{
+		DataTpl: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveShop_OrderItemsOutput}}}"]
 		}`,
 	},
@@ -84,7 +84,7 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 		ParentNodeID: "xyxzapi/index",
 		TemplateName: "suifengpiao14/container",
 		NodeID:       "arriveHomeContent",
-		Props: `{
+		DataTpl: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveHome_orderItemsOutput}}}"]
 		}`,
 	},
@@ -97,7 +97,7 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 		ParentNodeID: "xyxzapi/index",
 		TemplateName: "suifengpiao14/tab",
 		NodeID:       "orderTypeTab",
-		Props: `{
+		DataTpl: `{
 				"namespace":"orderTypeTab",
 				"eventName":"",
 				"activeTabId":"arrive_shop",
@@ -111,7 +111,7 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 		ParentNodeID: "xyxzapi/index",
 		TemplateName: "xyxzapi/index",
 		NodeID:       "index",
-		Props: `{
+		DataTpl: `{
 	"orderTypeTab":"{{{orderTypeTabOutput}}}"
 	}`,
 	},
@@ -201,7 +201,7 @@ func TestRanderSubPage(t *testing.T) {
 			ParentNodeID: "html/component",
 			TemplateName: "suifengpiao14/table",
 			NodeID:       "table",
-			Props: `
+			DataTpl: `
 			<headers>
 			<column>name</column>
 			<title>姓名</title>
