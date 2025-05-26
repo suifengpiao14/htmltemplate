@@ -21,22 +21,22 @@ func NewComponentTree(name string, assembles ComponentNodes, components Componen
 	}
 }
 
-func (p Component) ToHtml(data map[string]any) (rootComponentHtml string, err error) {
-	rootComponentName := p.Name
-	assembles := p.Nodes
-	components := p.Templates
+func (p Component) Render(data map[string]any) (rootComponentHtml string, err error) {
+	componentName := p.Name
+	nodes := p.Nodes
+	templates := p.Templates
 
 	attrs := p.Attributes
 	data = MergeMap(attrs.MapData(), data)
-	variables, err := assembles.RenderComponent(components, data)
+	variables, err := nodes.RenderTemplate(templates, data)
 	if err != nil {
 		return "", err
 	}
 
-	rootAssembles := assembles.GetByComponentName(rootComponentName)
+	rootAssembles := nodes.GetByComponentName(componentName)
 	first, err := rootAssembles.First()
 	if err != nil {
-		err = errors.WithMessagef(err, "componentName(same as rootComponentName):%s", rootComponentName)
+		err = errors.WithMessagef(err, "componentName(same as componentName):%s", componentName)
 		return "", err
 	}
 	val := variables[first.GetOutputKey()]

@@ -6,7 +6,7 @@ import (
 	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
 )
 
-func TestComponent(t *testing.T) {
+func TestComponentTemplate(t *testing.T) {
 	component := htmlcomponent.ComponentTemplate{
 		Name: "xyxzapi/index",
 		Template: `

@@ -109,7 +109,7 @@ func (as ComponentNodes) First() (assemble ComponentNode, err error) {
 
 }
 
-func (as ComponentNodes) FilterByRootComponentName(RootComponentName string) (onePageAssembles ComponentNodes) {
+func (as ComponentNodes) FilterByComponentName(RootComponentName string) (onePageAssembles ComponentNodes) {
 	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
 		return a.ParentNodeID == RootComponentName
 	}).ToSlice()
@@ -186,7 +186,7 @@ func (as ComponentNodes) resolveDependence() (ordered ComponentNodes) {
 	return ordered
 }
 
-func (as ComponentNodes) RenderComponent(cs ComponentTemplates, data map[string]any) (segments map[string]any, err error) {
+func (as ComponentNodes) RenderTemplate(cs ComponentTemplates, data map[string]any) (segments map[string]any, err error) {
 	segments = make(map[string]any, 0)
 	ordered := as.resolveDependence()
 	for _, r := range ordered {

@@ -29,7 +29,7 @@ func (s HtmlTemplateApiService) Render(componentRootName string, data map[string
 	if err != nil {
 		return "", err
 	}
-	rootComponentHtml, err = rootComponent.ToHtml(data)
+	rootComponentHtml, err = rootComponent.Render(data)
 	if err != nil {
 		return "", err
 	}

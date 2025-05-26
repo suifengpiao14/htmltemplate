@@ -10,7 +10,7 @@ import (
 )
 
 var allComponent = htmlcomponent.AllComponent
-var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
+var xyxzApiIndexNodes = htmlcomponent.ComponentNodes{
 
 	{
 		ParentNodeID: "xyxzapi/index",
@@ -118,8 +118,8 @@ var xyxzApiIndexAssembles = htmlcomponent.ComponentNodes{
 }
 
 func TestPage(t *testing.T) {
-	rootComponentName := "xyxzapi/index"
-	as := xyxzApiIndexAssembles.FilterByRootComponentName(rootComponentName)
+	componentName := "xyxzapi/index"
+	as := xyxzApiIndexNodes.FilterByComponentName(componentName)
 	allData := map[string]any{
 		"arriveHome_orderItemsInput": map[string]any{
 			"namespace": "arriveHome_from_data",
@@ -149,7 +149,7 @@ func TestPage(t *testing.T) {
 			},
 		},
 	}
-	variables, err := as.RenderComponent(allComponent, allData)
+	variables, err := as.RenderTemplate(allComponent, allData)
 	require.NoError(t, err)
 	indexHtml := variables["indexOutput"]
 	fmt.Println(indexHtml)
@@ -157,7 +157,7 @@ func TestPage(t *testing.T) {
 }
 
 func TestGetDependence(t *testing.T) {
-	a := xyxzApiIndexAssembles[2]
+	a := xyxzApiIndexNodes[2]
 	dependences := a.GetDependence()
 	fmt.Println(dependences)
 }
@@ -176,13 +176,13 @@ func TestRanderTable(t *testing.T) {
 		},
 	}
 
-	as := TestHtmlComponentIndexAssembles.FilterByRootComponentName(rootComponentName)
+	as := TestHtmlComponentIndexAssembles.FilterByComponentName(rootComponentName)
 	data := rows2TableData()
 	rowsMap := funcs.Struct2JsonMap(data)
 	allData := map[string]any{
 		"tableInput": rowsMap,
 	}
-	variables, err := as.RenderComponent(allComponent, allData)
+	variables, err := as.RenderTemplate(allComponent, allData)
 	require.NoError(t, err)
 	indexHtml := variables["tableOutput"]
 	fmt.Println(indexHtml)
@@ -248,7 +248,7 @@ func TestRanderSubPage(t *testing.T) {
 	}
 
 	rootComponentName := "html/component"
-	as := TestHtmlComponentIndexAssembles.FilterByRootComponentName(rootComponentName)
+	as := TestHtmlComponentIndexAssembles.FilterByComponentName(rootComponentName)
 	tableDataMap := map[string]any{
 		"items": []map[string]any{
 			{
@@ -267,7 +267,7 @@ func TestRanderSubPage(t *testing.T) {
 	allData := map[string]any{
 		"tableInput": tableDataMap,
 	}
-	variables, err := as.RenderComponent(allComponent, allData)
+	variables, err := as.RenderTemplate(allComponent, allData)
 	require.NoError(t, err)
 	indexHtml := variables["tableOutput"]
 	fmt.Println(indexHtml)
