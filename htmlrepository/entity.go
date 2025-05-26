@@ -29,11 +29,11 @@ type Attribute struct {
 
 func ToHtmlAssemble(assemble Assemble) htmlcomponent.ComponentNode {
 	return htmlcomponent.ComponentNode{
-		ParentNodeID: assemble.RootComponentName,
-		TemplateName: assemble.ComponentName,
-		NodeID:       assemble.AssembleName,
-		DataTpl:      assemble.DataTpl,
-		DataExample:  assemble.DataExample,
+		ComponentName: assemble.RootComponentName,
+		TemplateName:  assemble.ComponentName,
+		NodeID:        assemble.AssembleName,
+		DataTpl:       assemble.DataTpl,
+		DataExample:   assemble.DataExample,
 	}
 }
 

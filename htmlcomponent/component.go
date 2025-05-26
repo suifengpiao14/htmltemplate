@@ -1,7 +1,6 @@
 package htmlcomponent
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cast"
 )
 
@@ -33,13 +32,12 @@ func (p Component) Render(data map[string]any) (rootComponentHtml string, err er
 		return "", err
 	}
 
-	rootAssembles := nodes.GetByComponentName(componentName)
-	first, err := rootAssembles.First()
+	rootNode, err := nodes.GetRootNode(componentName)
 	if err != nil {
-		err = errors.WithMessagef(err, "componentName(same as componentName):%s", componentName)
+
 		return "", err
 	}
-	val := variables[first.GetOutputKey()]
+	val := variables[rootNode.GetOutputKey()]
 	rootComponentHtml = cast.ToString(val)
 	return rootComponentHtml, nil
 }

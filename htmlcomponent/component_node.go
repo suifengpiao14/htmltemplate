@@ -11,13 +11,13 @@ import (
 )
 
 type ComponentNode struct {
-	ParentNodeID string   `json:"parentNodeId"`
-	TemplateName string   `json:"templateName"`
-	NodeID       string   `json:"nodeId"`
-	DataTpl      string   `json:"dataTpl"`    // 支持json和xml模板格式
-	Attributes   string   `json:"attributes"` // 属性,json格式
-	DataExample  string   `json:"dataExample"`
-	dependences  []string //依赖组件(所有的input key)
+	ComponentName string   `json:"componentName"`
+	TemplateName  string   `json:"templateName"`
+	NodeID        string   `json:"nodeId"`
+	DataTpl       string   `json:"dataTpl"`    // 支持json和xml模板格式
+	Attributes    string   `json:"attributes"` // 属性,json格式
+	DataExample   string   `json:"dataExample"`
+	dependences   []string //依赖组件(所有的input key)
 
 }
 
@@ -111,7 +111,7 @@ func (as ComponentNodes) First() (assemble ComponentNode, err error) {
 
 func (as ComponentNodes) FilterByComponentName(RootComponentName string) (onePageAssembles ComponentNodes) {
 	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
-		return a.ParentNodeID == RootComponentName
+		return a.ComponentName == RootComponentName
 	}).ToSlice()
 	return rows
 }
@@ -121,17 +121,21 @@ func (as ComponentNodes) Filter(filterFn func(a ComponentNode) bool) (subAssembl
 	}).ToSlice()
 	return rows
 }
-func (as ComponentNodes) GetByComponentName(componentName string) (assemble ComponentNodes) {
-	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
+func (as ComponentNodes) GetRootNode(componentName string) (node *ComponentNode, err error) {
+	node, err = memorytable.NewTable(as...).GetOneWithError(func(a ComponentNode) bool {
 		return a.TemplateName == componentName
-	}).ToSlice()
-	return rows
+	})
+	if err != nil {
+		err = errors.WithMessagef(err, "componentName:%s", componentName)
+		return nil, err
+	}
+	return node, nil
 
 }
 
-func (as ComponentNodes) GetByAssembleName(assembleName string) (assemble *ComponentNode, index int) {
+func (as ComponentNodes) GetByNodeId(nodeId string) (assemble *ComponentNode, index int) {
 	for i, relation := range as {
-		if relation.NodeID == assembleName {
+		if relation.NodeID == nodeId {
 			return &relation, i
 		}
 	}
@@ -165,16 +169,16 @@ func (as ComponentNodes) resolveDependence() (ordered ComponentNodes) {
 	// 构建依赖映射
 	for _, a := range as {
 		a.dependences = a.GetDependence()
-		_, aIndex := ordered.GetByAssembleName(a.NodeID)
+		_, aIndex := ordered.GetByNodeId(a.NodeID)
 		if aIndex < 0 {
 			aIndex = maxIndex // 默认增加到最后
 		}
 		for _, dep := range a.dependences {
-			dependence, fullItemsIndex := as.GetByAssembleName(dep)
+			dependence, fullItemsIndex := as.GetByNodeId(dep)
 			if fullItemsIndex < 0 {
 				continue
 			}
-			_, existsIndex := ordered.GetByAssembleName(dep)
+			_, existsIndex := ordered.GetByNodeId(dep)
 			if existsIndex < 0 {
 				ordered.InsertBefore(*dependence, aIndex)
 			}
