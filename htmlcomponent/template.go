@@ -8,7 +8,7 @@ import (
 	"github.com/suifengpiao14/htmltemplate/xmldata"
 )
 
-type ComponentTemplate struct {
+type Template struct {
 	Name             string `json:"name"`              //模板唯一标识
 	Template         string `json:"template"`          //HTML 模板内容
 	DataTpl          string `json:"dataTpl"`           // 需要的数据结构描述
@@ -17,7 +17,7 @@ type ComponentTemplate struct {
 
 }
 
-func (c ComponentTemplate) Render(data map[string]any) (html string, err error) {
+func (c Template) Render(data map[string]any) (html string, err error) {
 	newData, err := c.DecodeData(data)
 	if err != nil {
 		return "", err
@@ -33,7 +33,7 @@ func (c ComponentTemplate) Render(data map[string]any) (html string, err error) 
 	return html, nil
 }
 
-func (c ComponentTemplate) DecodeData(data map[string]any) (newData map[string]any, err error) {
+func (c Template) DecodeData(data map[string]any) (newData map[string]any, err error) {
 	newData, err = xmldata.DecodeTplData([]byte(c.DataTpl), data)
 	if err != nil {
 		return nil, errors.Wrap(err, "Component.DecodeData")
@@ -42,9 +42,9 @@ func (c ComponentTemplate) DecodeData(data map[string]any) (newData map[string]a
 	return newData, nil
 }
 
-type ComponentTemplates []ComponentTemplate
+type Templates []Template
 
-func (cs ComponentTemplates) GetByName(name string) (c *ComponentTemplate, ok bool) {
+func (cs Templates) GetByName(name string) (c *Template, ok bool) {
 	for _, c := range cs {
 		if strings.EqualFold(c.Name, name) {
 			return &c, true

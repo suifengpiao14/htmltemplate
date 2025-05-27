@@ -7,7 +7,7 @@ import (
 )
 
 func TestComponentTemplate(t *testing.T) {
-	component := htmlcomponent.ComponentTemplate{
+	component := htmlcomponent.Template{
 		Name: "xyxzapi/index",
 		Template: `
 		<div class="flex flex-col w-full ">

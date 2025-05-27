@@ -8,7 +8,7 @@ import (
 var SetNodeIdAndAttrHolder = htmlenhance.SetNodeIdAndAttrHolder
 var MergeClassAttrs = htmlenhance.MergeClassAttrs
 
-type Component = htmlcomponent.ComponentTemplate
+type Component = htmlcomponent.Template
 type Slot = htmlcomponent.Slot
 type Slots = htmlcomponent.Slots
 type Attribute = htmlcomponent.Attribute

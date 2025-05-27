@@ -7,14 +7,14 @@ import (
 )
 
 type HtmlTemplateApiService struct {
-	componentService ComponentSerivce[Component]
+	componentService ComponentSerivce[Template]
 	slotNameService  SlotService[Slot]
 	attributeService AttributeService[Attribute]
 }
 
 func NewHtmlTemplateApiService(dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) *HtmlTemplateApiService {
 	tableConfig := CustomTableConfig(dbHander, customTableFn)
-	componentService := newComponentSerivce[Component](tableConfig.Component)
+	componentService := newComponentSerivce[Template](tableConfig.Component)
 	slotNameService := newSlotService[Slot](tableConfig.Slot)
 	attributeService := newAttributeService[Attribute](tableConfig.Attribute)
 	return &HtmlTemplateApiService{
@@ -56,8 +56,8 @@ func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComp
 	if err != nil {
 		return rootComponentHtml, err
 	}
-	rootComponentHtml.Nodes = ToHtmlSlots(slotNames...)
-	componentNames := rootComponentHtml.Nodes.ComponentNames()
+	rootComponentHtml.Slots = ToHtmlSlots(slotNames...)
+	componentNames := rootComponentHtml.Slots.ComponentNames()
 	componentNames = append(componentNames, componentRootName)
 	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
 	components, err := s.componentService.ListByComponentNames(componentNames, func(listParam *sqlbuilder.ListParam) {

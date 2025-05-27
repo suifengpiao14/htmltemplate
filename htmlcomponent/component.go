@@ -6,15 +6,15 @@ import (
 
 type Component struct {
 	Name       string
-	Nodes      Slots
-	Templates  ComponentTemplates
+	Slots      Slots
+	Templates  Templates
 	Attributes Attributes
 }
 
-func NewComponentTree(name string, slotNames Slots, components ComponentTemplates, attributes Attributes) *Component {
+func NewComponent(name string, slotNames Slots, components Templates, attributes Attributes) *Component {
 	return &Component{
 		Name:       name,
-		Nodes:      slotNames,
+		Slots:      slotNames,
 		Templates:  components,
 		Attributes: attributes,
 	}
@@ -22,7 +22,7 @@ func NewComponentTree(name string, slotNames Slots, components ComponentTemplate
 
 func (p Component) Render(data map[string]any) (rootComponentHtml string, err error) {
 	componentName := p.Name
-	nodes := p.Nodes
+	nodes := p.Slots
 	templates := p.Templates
 	variables, err := nodes.RenderTemplate(templates, p.Attributes, data)
 	if err != nil {

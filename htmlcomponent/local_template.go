@@ -7,7 +7,7 @@ import (
 	"github.com/suifengpiao14/funcs"
 )
 
-var XyxzapiPageIndex = ComponentTemplate{
+var XyxzapiPageIndex = Template{
 	Name: "xyxzapi/index",
 	Template: `
 		<div class="flex flex-col w-full ">
@@ -19,7 +19,7 @@ var XyxzapiPageIndex = ComponentTemplate{
 	<orderTypeTab>{{{orderTypeTab}}}</orderTypeTab>`,
 }
 
-var XyxzOrderToolbar = ComponentTemplate{
+var XyxzOrderToolbar = Template{
 	Name: "xyxzapi/orderToolbar",
 	Template: `
 <div class="flex flex-row w-full ">
@@ -32,7 +32,7 @@ var XyxzOrderToolbar = ComponentTemplate{
 	DataTpl: ``,
 }
 
-var Container = ComponentTemplate{
+var Container = Template{
 	Name: "suifengpiao14/container",
 	Template: `
 	<div>
@@ -50,7 +50,7 @@ var Container = ComponentTemplate{
 	`,
 }
 
-var XyxzOrderListItem = ComponentTemplate{
+var XyxzOrderListItem = Template{
 	Name: "xyxzapi/orderListItem",
 	Template: `
 	{{#orders}}
@@ -106,7 +106,7 @@ var XyxzOrderListItem = ComponentTemplate{
 `,
 }
 
-var TabComponent = ComponentTemplate{
+var TabComponent = Template{
 	Name: "suifengpiao14/tab",
 	Template: `
 	 	<div data-fullname="{{namespace}}/tab" role="tablist" class="tabs tabs-bordered "
@@ -141,7 +141,7 @@ var TabComponent = ComponentTemplate{
 	`,
 }
 
-var TableComponent = ComponentTemplate{
+var TableComponent = Template{
 	Name: "suifengpiao14/table",
 	Template: `
 	<table class="min-w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
@@ -199,7 +199,7 @@ var TableComponent = ComponentTemplate{
 `,
 }
 
-var SearchFormComponent = ComponentTemplate{
+var SearchFormComponent = Template{
 	Name: "suifengpiao14/searchForm",
 	Template: `
  <form hx-post="{{hxpost}}" hx-target="{{hxtarget}}" hx-ext="json-enc-custom"
@@ -276,7 +276,7 @@ var SearchFormComponent = ComponentTemplate{
 `,
 }
 
-var HtmlDocumentComponent = ComponentTemplate{
+var HtmlDocumentComponent = Template{
 	Name: "suifengpiao14/htmlDocument",
 	Template: `
 	<!DOCTYPE html>
@@ -346,9 +346,9 @@ var HtmlDocumentComponent = ComponentTemplate{
 	`,
 }
 
-var HtmxAlpinejsPageComponent = ComponentTemplate{}
+var HtmxAlpinejsPageComponent = Template{}
 
-var AllComponent = ComponentTemplates{
+var AllComponent = Templates{
 	TabComponent,
 	XyxzapiPageIndex,
 	XyxzOrderListItem,

@@ -17,8 +17,8 @@ import (
 */
 
 type Attribute struct {
-	TagId          string `json:"tagId"`  // html标签id
-	NodeId         string `json:"nodeId"` // component node id(同一个template 在一个组件中可能用于多次,比如按钮-确定/取消按钮,所以需要携带NodeId区分不同节点)
+	TagId          string `json:"tagId"`    // html标签id
+	SlotName       string `json:"slotName"` // component node id(同一个template 在一个组件中可能用于多次,比如按钮-确定/取消按钮,所以需要携带NodeId区分不同节点)
 	AttributeName  string `json:"key"`
 	AttributeValue string `json:"value"`
 	sort           int
@@ -52,7 +52,7 @@ func (as Attributes) GetByTagID(TagId string) Attributes {
 
 func (as Attributes) GetByNodeID(nodeId string) Attributes {
 	attrs := memorytable.NewTable(as...).Where(func(record Attribute) bool {
-		return record.NodeId == nodeId
+		return record.SlotName == nodeId
 	})
 	return attrs.ToSlice()
 }

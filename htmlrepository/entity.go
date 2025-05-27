@@ -7,18 +7,18 @@ import (
 
 // 这里之所以重新声明一遍，主要是解耦 htmlcomponent包,和htmlrepository包之间的耦合关系，这里定义的gorm 必须和NewXXXField.name保持一致
 
-type Component struct {
+type Template struct {
 	ComponentName string `gorm:"column:componentName" json:"componentName"`
 	Template      string `gorm:"column:template" json:"template"`
 	DataTpl       string `gorm:"column:dataTpl" json:"dataTpl"`
 	DataExample   string `gorm:"column:dataExample" json:"dataExample"` // 示例数据，用于调试
 }
 type Slot struct {
-	RootComponentName string `gorm:"column:rootComponentName" json:"rootComponentName"`
-	ComponentName     string `gorm:"column:componentName" json:"componentName"`
-	SlotName          string `gorm:"column:slotName" json:"slotName"`
-	DataTpl           string `gorm:"column:dataTpl" json:"dataTpl"`
-	DataExample       string `gorm:"column:dataExample" json:"dataExample"`
+	TemplateName  string `gorm:"column:templateName" json:"templateName"`
+	ComponentName string `gorm:"column:componentName" json:"componentName"`
+	SlotName      string `gorm:"column:slotName" json:"slotName"`
+	DataTpl       string `gorm:"column:dataTpl" json:"dataTpl"`
+	DataExample   string `gorm:"column:dataExample" json:"dataExample"`
 }
 
 type Attribute struct {
@@ -30,7 +30,7 @@ type Attribute struct {
 
 func ToHtmlSlot(slotName Slot) htmlcomponent.Slot {
 	return htmlcomponent.Slot{
-		ComponentName: slotName.RootComponentName,
+		ComponentName: slotName.TemplateName,
 		TemplateName:  slotName.ComponentName,
 		SlotName:      slotName.SlotName,
 		DataTpl:       slotName.DataTpl,
@@ -47,7 +47,7 @@ func ToHtmlSlots(slotNames ...Slot) htmlcomponent.Slots {
 func ToHtmlAttribute(attribute Attribute) htmlcomponent.Attribute {
 	return htmlcomponent.Attribute{
 		TagId:          attribute.TagId,
-		NodeId:         attribute.NodeId,
+		SlotName:       attribute.NodeId,
 		AttributeName:  attribute.AttributeName,
 		AttributeValue: attribute.AttributeValue,
 	}
@@ -59,8 +59,8 @@ func ToHtmlAttributes(attributes ...Attribute) htmlcomponent.Attributes {
 	})
 }
 
-func ToHtmlComponent(component Component) htmlcomponent.ComponentTemplate {
-	return htmlcomponent.ComponentTemplate{
+func ToHtmlComponent(component Template) htmlcomponent.Template {
+	return htmlcomponent.Template{
 		Name:        component.ComponentName,
 		Template:    component.Template,
 		DataTpl:     component.DataTpl,
@@ -68,8 +68,8 @@ func ToHtmlComponent(component Component) htmlcomponent.ComponentTemplate {
 	}
 }
 
-func ToHtmlComponents(components ...Component) htmlcomponent.ComponentTemplates {
-	return memorytable.Map(components, func(item Component) htmlcomponent.ComponentTemplate {
+func ToHtmlComponents(components ...Template) htmlcomponent.Templates {
+	return memorytable.Map(components, func(item Template) htmlcomponent.Template {
 		return ToHtmlComponent(item)
 	})
 }
