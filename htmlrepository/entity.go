@@ -23,7 +23,7 @@ type Slot struct {
 
 type Attribute struct {
 	TagId          string `gorm:"column:tagId" json:"tagId"`
-	NodeId         string `gorm:"column:nodeId" json:"nodeId"`
+	SlotName       string `gorm:"column:slotName" json:"slotName"`
 	AttributeName  string `gorm:"column:attributeName" json:"key"`
 	AttributeValue string `gorm:"column:attributeValue" json:"value"`
 }
@@ -47,7 +47,7 @@ func ToHtmlSlots(slotNames ...Slot) htmlcomponent.Slots {
 func ToHtmlAttribute(attribute Attribute) htmlcomponent.Attribute {
 	return htmlcomponent.Attribute{
 		TagId:          attribute.TagId,
-		SlotName:       attribute.NodeId,
+		SlotName:       attribute.SlotName,
 		AttributeName:  attribute.AttributeName,
 		AttributeValue: attribute.AttributeValue,
 	}
