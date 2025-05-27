@@ -6,12 +6,12 @@ import (
 
 type Component struct {
 	Name       string
-	Nodes      ComponentNodes
+	Nodes      Slots
 	Templates  ComponentTemplates
 	Attributes Attributes
 }
 
-func NewComponentTree(name string, assembles ComponentNodes, components ComponentTemplates, attributes Attributes) *Component {
+func NewComponentTree(name string, assembles Slots, components ComponentTemplates, attributes Attributes) *Component {
 	return &Component{
 		Name:       name,
 		Nodes:      assembles,

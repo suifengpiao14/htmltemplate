@@ -10,10 +10,10 @@ import (
 	"github.com/suifengpiao14/memorytable"
 )
 
-type ComponentNode struct {
+type Slot struct {
 	ComponentName string   `json:"componentName"`
 	TemplateName  string   `json:"templateName"`
-	NodeID        string   `json:"nodeId"`
+	SlotName      string   `json:"partialName"`
 	DataTpl       string   `json:"dataTpl"`    // 支持json和xml模板格式
 	Attributes    string   `json:"attributes"` // 属性,json格式
 	DataExample   string   `json:"dataExample"`
@@ -21,11 +21,11 @@ type ComponentNode struct {
 
 }
 
-func (r ComponentNode) GetInputKey() string {
-	return fmt.Sprintf(`%sInput`, r.NodeID)
+func (r Slot) GetInputKey() string {
+	return fmt.Sprintf(`%sInput`, r.SlotName)
 }
-func (r ComponentNode) GetOutputKey() string {
-	return fmt.Sprintf(`%sOutput`, r.NodeID)
+func (r Slot) GetOutputKey() string {
+	return fmt.Sprintf(`%sOutput`, r.SlotName)
 }
 
 func replacePlaceholder(s string, data map[string]any) any {
@@ -63,7 +63,7 @@ func ReplacePlaceholder(jsonPlaceholder any, data map[string]any) (newData any) 
 	return jsonPlaceholder
 }
 
-func (r ComponentNode) DecodeData(data map[string]any) (newData map[string]any, err error) {
+func (r Slot) DecodeData(data map[string]any) (newData map[string]any, err error) {
 	newData, err = xmldata.DecodeTplData([]byte(r.DataTpl), data)
 	if err != nil {
 		return nil, errors.Wrap(err, "Assemble.DecodeData")
@@ -72,7 +72,7 @@ func (r ComponentNode) DecodeData(data map[string]any) (newData map[string]any, 
 	return newData, nil
 }
 
-func (r ComponentNode) GetDependence() (dependences []string) {
+func (r Slot) GetDependence() (dependences []string) {
 	dependences = make([]string, 0)
 	if r.DataTpl == "" {
 		dependences = memorytable.NewTable(dependences...).FilterEmpty()
@@ -96,11 +96,11 @@ func (r ComponentNode) GetDependence() (dependences []string) {
 // 	return r.GetOutputKey(), value
 // }
 
-type ComponentNodes []ComponentNode
+type Slots []Slot
 
 var Error_not_found = errors.New("not found")
 
-func (as ComponentNodes) First() (assemble ComponentNode, err error) {
+func (as Slots) First() (assemble Slot, err error) {
 	if len(as) == 0 {
 		return assemble, Error_not_found
 	}
@@ -109,20 +109,20 @@ func (as ComponentNodes) First() (assemble ComponentNode, err error) {
 
 }
 
-func (as ComponentNodes) FilterByComponentName(RootComponentName string) (onePageAssembles ComponentNodes) {
-	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
+func (as Slots) FilterByComponentName(RootComponentName string) (onePageAssembles Slots) {
+	rows := memorytable.NewTable(as...).Where(func(a Slot) bool {
 		return a.ComponentName == RootComponentName
 	}).ToSlice()
 	return rows
 }
-func (as ComponentNodes) Filter(filterFn func(a ComponentNode) bool) (subAssembles ComponentNodes) {
-	rows := memorytable.NewTable(as...).Where(func(a ComponentNode) bool {
+func (as Slots) Filter(filterFn func(a Slot) bool) (subAssembles Slots) {
+	rows := memorytable.NewTable(as...).Where(func(a Slot) bool {
 		return filterFn(a)
 	}).ToSlice()
 	return rows
 }
-func (as ComponentNodes) GetRootNode(componentName string) (node *ComponentNode, err error) {
-	node, err = memorytable.NewTable(as...).GetOneWithError(func(a ComponentNode) bool {
+func (as Slots) GetRootNode(componentName string) (node *Slot, err error) {
+	node, err = memorytable.NewTable(as...).GetOneWithError(func(a Slot) bool {
 		return a.TemplateName == componentName
 	})
 	if err != nil {
@@ -133,16 +133,16 @@ func (as ComponentNodes) GetRootNode(componentName string) (node *ComponentNode,
 
 }
 
-func (as ComponentNodes) GetByNodeId(nodeId string) (assemble *ComponentNode, index int) {
+func (as Slots) GetByNodeId(nodeId string) (assemble *Slot, index int) {
 	for i, relation := range as {
-		if relation.NodeID == nodeId {
+		if relation.SlotName == nodeId {
 			return &relation, i
 		}
 	}
 	return nil, -1
 }
 
-func (as ComponentNodes) ComponentNames() (componentNames []string) {
+func (as Slots) ComponentNames() (componentNames []string) {
 	componentNames = make([]string, 0)
 	for _, a := range as {
 		componentNames = append(componentNames, a.TemplateName)
@@ -153,23 +153,23 @@ func (as ComponentNodes) ComponentNames() (componentNames []string) {
 	return componentNames
 }
 
-func (as *ComponentNodes) Insert(a ComponentNode, index int) {
+func (as *Slots) Insert(a Slot, index int) {
 	tmp := memorytable.NewTable(*as...).Insert(a, index)
-	*as = ComponentNodes(tmp)
+	*as = Slots(tmp)
 }
 
-func (as *ComponentNodes) InsertBefore(a ComponentNode, index int) {
+func (as *Slots) InsertBefore(a Slot, index int) {
 	as.Insert(a, index-1)
 }
 
 // resolveDependence 解析依赖关系，根据组件依赖的变量,以及组件的PlaceHolder,决定渲染顺序
-func (nodes ComponentNodes) resolveDependence() (ordered ComponentNodes) {
-	ordered = make(ComponentNodes, 0)
+func (nodes Slots) resolveDependence() (ordered Slots) {
+	ordered = make(Slots, 0)
 	maxIndex := len(nodes)
 	// 构建依赖映射
 	for _, a := range nodes {
 		a.dependences = a.GetDependence()
-		_, aIndex := ordered.GetByNodeId(a.NodeID)
+		_, aIndex := ordered.GetByNodeId(a.SlotName)
 		if aIndex < 0 {
 			aIndex = maxIndex // 默认增加到最后
 		}
@@ -190,7 +190,7 @@ func (nodes ComponentNodes) resolveDependence() (ordered ComponentNodes) {
 	return ordered
 }
 
-func (nodes ComponentNodes) RenderTemplate(cs ComponentTemplates, attributes Attributes, data map[string]any) (segments map[string]any, err error) {
+func (nodes Slots) RenderTemplate(cs ComponentTemplates, attributes Attributes, data map[string]any) (segments map[string]any, err error) {
 	segments = make(map[string]any, 0)
 	ordered := nodes.resolveDependence()
 	for _, node := range ordered {
@@ -198,7 +198,7 @@ func (nodes ComponentNodes) RenderTemplate(cs ComponentTemplates, attributes Att
 		if !ok {
 			continue
 		}
-		attrs := attributes.GetByNodeID(node.NodeID)
+		attrs := attributes.GetByNodeID(node.SlotName)
 		data = MergeMap(attrs.MapData(), data)
 		subData := data[node.GetInputKey()]
 		componentData := make(map[string]any, 0)

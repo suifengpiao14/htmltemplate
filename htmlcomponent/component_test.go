@@ -11,7 +11,7 @@ import (
 func TestComponent(t *testing.T) {
 	var component = htmlcomponent.Component{
 		Name:      "xyxzapi/index",
-		Nodes:     xyxzApiIndexNodes,
+		Nodes:     xyxzApiIndexSlots,
 		Templates: allComponent,
 	}
 	data := map[string]any{}

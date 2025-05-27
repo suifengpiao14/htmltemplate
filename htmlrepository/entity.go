@@ -28,18 +28,18 @@ type Attribute struct {
 	AttributeValue string `gorm:"column:attributeValue" json:"value"`
 }
 
-func ToHtmlAssemble(assemble Assemble) htmlcomponent.ComponentNode {
-	return htmlcomponent.ComponentNode{
+func ToHtmlAssemble(assemble Assemble) htmlcomponent.Slot {
+	return htmlcomponent.Slot{
 		ComponentName: assemble.RootComponentName,
 		TemplateName:  assemble.ComponentName,
-		NodeID:        assemble.AssembleName,
+		SlotName:      assemble.AssembleName,
 		DataTpl:       assemble.DataTpl,
 		DataExample:   assemble.DataExample,
 	}
 }
 
-func ToHtmlAssembles(assembles ...Assemble) htmlcomponent.ComponentNodes {
-	return memorytable.Map(assembles, func(item Assemble) htmlcomponent.ComponentNode {
+func ToHtmlAssembles(assembles ...Assemble) htmlcomponent.Slots {
+	return memorytable.Map(assembles, func(item Assemble) htmlcomponent.Slot {
 		return ToHtmlAssemble(item)
 	})
 }

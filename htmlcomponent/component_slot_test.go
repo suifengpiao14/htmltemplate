@@ -10,12 +10,12 @@ import (
 )
 
 var allComponent = htmlcomponent.AllComponent
-var xyxzApiIndexNodes = htmlcomponent.ComponentNodes{
+var xyxzApiIndexSlots = htmlcomponent.Slots{
 
 	{
 		ComponentName: "xyxzapi/index",
 		TemplateName:  "xyxzapi/orderListItem",
-		NodeID:        "arriveShop_OrderItems",
+		SlotName:      "arriveShop_OrderItems",
 		DataTpl: `{
 		"namespace":"arriveShop",
 		"orders":[{
@@ -45,7 +45,7 @@ var xyxzApiIndexNodes = htmlcomponent.ComponentNodes{
 	{
 		ComponentName: "xyxzapi/index",
 		TemplateName:  "xyxzapi/orderListItem",
-		NodeID:        "arriveHome_orderItems",
+		SlotName:      "arriveHome_orderItems",
 		DataTpl: `{
 		"namespace":"arriveHome",
 		"orders":[{
@@ -75,7 +75,7 @@ var xyxzApiIndexNodes = htmlcomponent.ComponentNodes{
 	{
 		ComponentName: "xyxzapi/index",
 		TemplateName:  "suifengpiao14/container",
-		NodeID:        "arriveShopContent",
+		SlotName:      "arriveShopContent",
 		DataTpl: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveShop_OrderItemsOutput}}}"]
 		}`,
@@ -83,7 +83,7 @@ var xyxzApiIndexNodes = htmlcomponent.ComponentNodes{
 	{
 		ComponentName: "xyxzapi/index",
 		TemplateName:  "suifengpiao14/container",
-		NodeID:        "arriveHomeContent",
+		SlotName:      "arriveHomeContent",
 		DataTpl: `{
 		"children":["{{{toolbarOutput}}}","{{{arriveHome_orderItemsOutput}}}"]
 		}`,
@@ -91,12 +91,12 @@ var xyxzApiIndexNodes = htmlcomponent.ComponentNodes{
 	{
 		ComponentName: "xyxzapi/index",
 		TemplateName:  "xyxzapi/orderToolbar",
-		NodeID:        "toolbar",
+		SlotName:      "toolbar",
 	},
 	{
 		ComponentName: "xyxzapi/index",
 		TemplateName:  "suifengpiao14/tab",
-		NodeID:        "orderTypeTab",
+		SlotName:      "orderTypeTab",
 		DataTpl: `{
 				"namespace":"orderTypeTab",
 				"eventName":"",
@@ -110,7 +110,7 @@ var xyxzApiIndexNodes = htmlcomponent.ComponentNodes{
 	{
 		ComponentName: "xyxzapi/index",
 		TemplateName:  "xyxzapi/index",
-		NodeID:        "index",
+		SlotName:      "index",
 		DataTpl: `{
 	"orderTypeTab":"{{{orderTypeTabOutput}}}"
 	}`,
@@ -119,7 +119,7 @@ var xyxzApiIndexNodes = htmlcomponent.ComponentNodes{
 
 func TestPage(t *testing.T) {
 	componentName := "xyxzapi/index"
-	as := xyxzApiIndexNodes.FilterByComponentName(componentName)
+	as := xyxzApiIndexSlots.FilterByComponentName(componentName)
 	allData := map[string]any{
 		"arriveHome_orderItemsInput": map[string]any{
 			"namespace": "arriveHome_from_data",
@@ -157,18 +157,18 @@ func TestPage(t *testing.T) {
 }
 
 func TestGetDependence(t *testing.T) {
-	a := xyxzApiIndexNodes[2]
+	a := xyxzApiIndexSlots[2]
 	dependences := a.GetDependence()
 	fmt.Println(dependences)
 }
 
 func TestRanderTable(t *testing.T) {
 	rootComponentName := "html/component"
-	var TestHtmlComponentIndexAssembles = htmlcomponent.ComponentNodes{
+	var TestHtmlComponentIndexAssembles = htmlcomponent.Slots{
 		{
 			ComponentName: "html/component",
 			TemplateName:  "suifengpiao14/table",
-			NodeID:        "table",
+			SlotName:      "table",
 		},
 		{
 			ComponentName: "test/htmlComponent",
@@ -196,11 +196,11 @@ type userInfo struct {
 
 func TestRanderSubPage(t *testing.T) {
 
-	var TestHtmlComponentIndexAssembles = htmlcomponent.ComponentNodes{
+	var TestHtmlComponentIndexAssembles = htmlcomponent.Slots{
 		{
 			ComponentName: "html/component",
 			TemplateName:  "suifengpiao14/table",
-			NodeID:        "table",
+			SlotName:      "table",
 			DataTpl: `
 			<headers>
 			<column>name</column>
