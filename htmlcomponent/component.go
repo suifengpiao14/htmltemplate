@@ -11,10 +11,10 @@ type Component struct {
 	Attributes Attributes
 }
 
-func NewComponentTree(name string, assembles Slots, components ComponentTemplates, attributes Attributes) *Component {
+func NewComponentTree(name string, slotNames Slots, components ComponentTemplates, attributes Attributes) *Component {
 	return &Component{
 		Name:       name,
-		Nodes:      assembles,
+		Nodes:      slotNames,
 		Templates:  components,
 		Attributes: attributes,
 	}

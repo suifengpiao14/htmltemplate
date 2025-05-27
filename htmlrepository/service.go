@@ -8,18 +8,18 @@ import (
 
 type HtmlTemplateApiService struct {
 	componentService ComponentSerivce[Component]
-	assembleService  AssembleService[Assemble]
+	slotNameService  SlotService[Slot]
 	attributeService AttributeService[Attribute]
 }
 
 func NewHtmlTemplateApiService(dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) *HtmlTemplateApiService {
 	tableConfig := CustomTableConfig(dbHander, customTableFn)
 	componentService := newComponentSerivce[Component](tableConfig.Component)
-	assembleService := newAssembleService[Assemble](tableConfig.Assemble)
+	slotNameService := newSlotService[Slot](tableConfig.Slot)
 	attributeService := newAttributeService[Attribute](tableConfig.Attribute)
 	return &HtmlTemplateApiService{
 		componentService: componentService,
-		assembleService:  assembleService,
+		slotNameService:  slotNameService,
 		attributeService: attributeService,
 	}
 }
@@ -37,14 +37,14 @@ func (s HtmlTemplateApiService) Render(componentRootName string, data map[string
 }
 
 func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComponentHtml htmlcomponent.Component, err error) {
-	assembles, err := s.assembleService.ListByRootComponentName(componentRootName, func(listParam *sqlbuilder.ListParam) {
+	slotNames, err := s.slotNameService.ListByRootComponentName(componentRootName, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
 						sqlbuilder.GetFieldName(NewRootComponentNameField),
 						sqlbuilder.GetFieldName(NewComponentNameField),
-						sqlbuilder.GetFieldName(NewAssembleNameField),
+						sqlbuilder.GetFieldName(NewSlotNameField),
 						sqlbuilder.GetFieldName(NewDataTplField),
 					).DbNameWithAlias()
 					f.SetSelectColumns(setSelectColumns.AsAny()...)
@@ -56,7 +56,7 @@ func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComp
 	if err != nil {
 		return rootComponentHtml, err
 	}
-	rootComponentHtml.Nodes = ToHtmlAssembles(assembles...)
+	rootComponentHtml.Nodes = ToHtmlSlots(slotNames...)
 	componentNames := rootComponentHtml.Nodes.ComponentNames()
 	componentNames = append(componentNames, componentRootName)
 	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
@@ -104,18 +104,18 @@ func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComp
 
 type HtmlTemplateAdminService[C any, A any, R any] struct {
 	Component ComponentSerivce[C]
-	Assemble  AssembleService[A]
+	Slot      SlotService[A]
 	Attribute AttributeService[R]
 }
 
 func NewHtmlTemplateAdminService[C any, A any, R any](dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) HtmlTemplateAdminService[C, A, R] {
 	tableConfig := CustomTableConfig(dbHander, customTableFn)
 	componentService := newComponentSerivce[C](tableConfig.Component)
-	assembleService := newAssembleService[A](tableConfig.Assemble)
+	slotNameService := newSlotService[A](tableConfig.Slot)
 	attributeService := newAttributeService[R](tableConfig.Attribute)
 	return HtmlTemplateAdminService[C, A, R]{
 		Component: componentService,
-		Assemble:  assembleService,
+		Slot:      slotNameService,
 		Attribute: attributeService,
 	}
 }

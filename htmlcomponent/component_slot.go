@@ -66,7 +66,7 @@ func ReplacePlaceholder(jsonPlaceholder any, data map[string]any) (newData any) 
 func (r Slot) DecodeData(data map[string]any) (newData map[string]any, err error) {
 	newData, err = xmldata.DecodeTplData([]byte(r.DataTpl), data)
 	if err != nil {
-		return nil, errors.Wrap(err, "Assemble.DecodeData")
+		return nil, errors.Wrap(err, "Slot.DecodeData")
 	}
 	newData = MergeMap(data, newData)
 	return newData, nil
@@ -81,9 +81,9 @@ func (r Slot) GetDependence() (dependences []string) {
 	regexp := regexp.MustCompile(`\{\{\{?([\w\.\-]+)\}\}\}?`)
 	matches := regexp.FindAllStringSubmatch(r.DataTpl, -1)
 	for _, match := range matches {
-		assembleName := strings.TrimSuffix(match[1], "Output")
-		assembleName = strings.TrimSuffix(assembleName, "Input")
-		dependences = append(dependences, assembleName)
+		slotName := strings.TrimSuffix(match[1], "Output")
+		slotName = strings.TrimSuffix(slotName, "Input")
+		dependences = append(dependences, slotName)
 	}
 	dependences = memorytable.NewTable(dependences...).FilterEmpty().Uniqueue(func(row string) (key string) {
 		return row
@@ -91,7 +91,7 @@ func (r Slot) GetDependence() (dependences []string) {
 	return dependences
 }
 
-// func (r Assemble) Render(tpl string, data map[string]any) (key string, value string) {
+// func (r Slot) Render(tpl string, data map[string]any) (key string, value string) {
 // 	value = pkg.MustacheMustRender(tpl, data)
 // 	return r.GetOutputKey(), value
 // }
@@ -100,22 +100,22 @@ type Slots []Slot
 
 var Error_not_found = errors.New("not found")
 
-func (as Slots) First() (assemble Slot, err error) {
+func (as Slots) First() (slotName Slot, err error) {
 	if len(as) == 0 {
-		return assemble, Error_not_found
+		return slotName, Error_not_found
 	}
-	assemble = as[0]
-	return assemble, nil
+	slotName = as[0]
+	return slotName, nil
 
 }
 
-func (as Slots) FilterByComponentName(RootComponentName string) (onePageAssembles Slots) {
+func (as Slots) FilterByComponentName(RootComponentName string) (onePageSlots Slots) {
 	rows := memorytable.NewTable(as...).Where(func(a Slot) bool {
 		return a.ComponentName == RootComponentName
 	}).ToSlice()
 	return rows
 }
-func (as Slots) Filter(filterFn func(a Slot) bool) (subAssembles Slots) {
+func (as Slots) Filter(filterFn func(a Slot) bool) (subSlots Slots) {
 	rows := memorytable.NewTable(as...).Where(func(a Slot) bool {
 		return filterFn(a)
 	}).ToSlice()
@@ -133,7 +133,7 @@ func (as Slots) GetRootNode(componentName string) (node *Slot, err error) {
 
 }
 
-func (as Slots) GetByNodeId(nodeId string) (assemble *Slot, index int) {
+func (as Slots) GetByNodeId(nodeId string) (slotName *Slot, index int) {
 	for i, relation := range as {
 		if relation.SlotName == nodeId {
 			return &relation, i

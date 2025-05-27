@@ -13,10 +13,10 @@ type Component struct {
 	DataTpl       string `gorm:"column:dataTpl" json:"dataTpl"`
 	DataExample   string `gorm:"column:dataExample" json:"dataExample"` // 示例数据，用于调试
 }
-type Assemble struct {
+type Slot struct {
 	RootComponentName string `gorm:"column:rootComponentName" json:"rootComponentName"`
 	ComponentName     string `gorm:"column:componentName" json:"componentName"`
-	AssembleName      string `gorm:"column:assembleName" json:"assembleName"`
+	SlotName          string `gorm:"column:slotName" json:"slotName"`
 	DataTpl           string `gorm:"column:dataTpl" json:"dataTpl"`
 	DataExample       string `gorm:"column:dataExample" json:"dataExample"`
 }
@@ -28,19 +28,19 @@ type Attribute struct {
 	AttributeValue string `gorm:"column:attributeValue" json:"value"`
 }
 
-func ToHtmlAssemble(assemble Assemble) htmlcomponent.Slot {
+func ToHtmlSlot(slotName Slot) htmlcomponent.Slot {
 	return htmlcomponent.Slot{
-		ComponentName: assemble.RootComponentName,
-		TemplateName:  assemble.ComponentName,
-		SlotName:      assemble.AssembleName,
-		DataTpl:       assemble.DataTpl,
-		DataExample:   assemble.DataExample,
+		ComponentName: slotName.RootComponentName,
+		TemplateName:  slotName.ComponentName,
+		SlotName:      slotName.SlotName,
+		DataTpl:       slotName.DataTpl,
+		DataExample:   slotName.DataExample,
 	}
 }
 
-func ToHtmlAssembles(assembles ...Assemble) htmlcomponent.Slots {
-	return memorytable.Map(assembles, func(item Assemble) htmlcomponent.Slot {
-		return ToHtmlAssemble(item)
+func ToHtmlSlots(slotNames ...Slot) htmlcomponent.Slots {
+	return memorytable.Map(slotNames, func(item Slot) htmlcomponent.Slot {
+		return ToHtmlSlot(item)
 	})
 }
 

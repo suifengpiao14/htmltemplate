@@ -4,7 +4,7 @@ import "github.com/suifengpiao14/sqlbuilder"
 
 type TableConfig struct {
 	Component sqlbuilder.TableConfig
-	Assemble  sqlbuilder.TableConfig
+	Slot      sqlbuilder.TableConfig
 	Attribute sqlbuilder.TableConfig
 }
 
@@ -22,17 +22,17 @@ var table_component = sqlbuilder.NewTableConfig("t_component").AddColumns(
 	},
 })
 
-var table_assemble = sqlbuilder.NewTableConfig("t_assemble").AddColumns(
+var table_slotName = sqlbuilder.NewTableConfig("t_slotName").AddColumns(
 	sqlbuilder.NewColumnConfig("Froot_component_name", sqlbuilder.GetFieldName(NewRootComponentNameField)),
 	sqlbuilder.NewColumnConfig("Fcomponent_name", sqlbuilder.GetFieldName(NewComponentNameField)),
-	sqlbuilder.NewColumnConfig("Fassemble_name", sqlbuilder.GetFieldName(NewAssembleNameField)),
+	sqlbuilder.NewColumnConfig("FslotName_name", sqlbuilder.GetFieldName(NewSlotNameField)),
 	sqlbuilder.NewColumnConfig("Fdata_tpl", sqlbuilder.GetFieldName(NewDataTplField)),
 ).AddIndexs(sqlbuilder.Index{
 	Unique: true,
 	ColumnNames: func(tableColumns sqlbuilder.ColumnConfigs) (columnNames []string) {
 		columnNames = tableColumns.FieldName2ColumnName(
 			sqlbuilder.GetFieldName(NewRootComponentNameField),
-			sqlbuilder.GetFieldName(NewAssembleNameField),
+			sqlbuilder.GetFieldName(NewSlotNameField),
 		)
 		return columnNames
 	},
@@ -55,16 +55,16 @@ var table_attribute = sqlbuilder.NewTableConfig("t_attribute").AddColumns(
 	},
 })
 
-//CustomTableConfig 初始化表配置信息
+// CustomTableConfig 初始化表配置信息
 func CustomTableConfig(dbHandler sqlbuilder.Handler, configFn func(table TableConfig) (configedTable TableConfig)) TableConfig {
 	var tableConfig = TableConfig{
 		Component: table_component,
-		Assemble:  table_assemble,
+		Slot:      table_slotName,
 		Attribute: table_attribute,
 	}
 
 	tableConfig.Component = tableConfig.Component.WithHandler(dbHandler)
-	tableConfig.Assemble = tableConfig.Assemble.WithHandler(dbHandler)
+	tableConfig.Slot = tableConfig.Slot.WithHandler(dbHandler)
 	tableConfig.Attribute = tableConfig.Attribute.WithHandler(dbHandler)
 	if configFn != nil {
 		tableConfig = configFn(tableConfig)

@@ -164,7 +164,7 @@ func TestGetDependence(t *testing.T) {
 
 func TestRanderTable(t *testing.T) {
 	rootComponentName := "html/component"
-	var TestHtmlComponentIndexAssembles = htmlcomponent.Slots{
+	var TestHtmlComponentIndexSlots = htmlcomponent.Slots{
 		{
 			ComponentName: "html/component",
 			TemplateName:  "suifengpiao14/table",
@@ -176,7 +176,7 @@ func TestRanderTable(t *testing.T) {
 		},
 	}
 
-	as := TestHtmlComponentIndexAssembles.FilterByComponentName(rootComponentName)
+	as := TestHtmlComponentIndexSlots.FilterByComponentName(rootComponentName)
 	data := rows2TableData()
 	rowsMap := funcs.Struct2JsonMap(data)
 	allData := map[string]any{
@@ -196,7 +196,7 @@ type userInfo struct {
 
 func TestRanderSubPage(t *testing.T) {
 
-	var TestHtmlComponentIndexAssembles = htmlcomponent.Slots{
+	var TestHtmlComponentIndexSlots = htmlcomponent.Slots{
 		{
 			ComponentName: "html/component",
 			TemplateName:  "suifengpiao14/table",
@@ -248,7 +248,7 @@ func TestRanderSubPage(t *testing.T) {
 	}
 
 	rootComponentName := "html/component"
-	as := TestHtmlComponentIndexAssembles.FilterByComponentName(rootComponentName)
+	as := TestHtmlComponentIndexSlots.FilterByComponentName(rootComponentName)
 	tableDataMap := map[string]any{
 		"items": []map[string]any{
 			{

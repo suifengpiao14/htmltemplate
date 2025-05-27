@@ -45,26 +45,26 @@ func (s ComponentSerivce[C]) ListByComponentNames(componentNames []string, custo
 	return models, nil
 }
 
-type AssembleService[A any] struct {
+type SlotService[A any] struct {
 	sqlbuilder.RepositoryQuery[A]
 	sqlbuilder.RepositoryCommand
 }
 
-func newAssembleService[A any](tableConfig sqlbuilder.TableConfig) AssembleService[A] {
+func newSlotService[A any](tableConfig sqlbuilder.TableConfig) SlotService[A] {
 	repositoryQuery := sqlbuilder.NewRepositoryQuery[A](tableConfig)
 	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return AssembleService[A]{
+	return SlotService[A]{
 		RepositoryQuery:   repositoryQuery,
 		RepositoryCommand: repositoryCommand,
 	}
 }
 
-func (s AssembleService[A]) Set(assemble Assemble, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s SlotService[A]) Set(slotName Slot, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
-		NewRootComponentNameField(assemble.RootComponentName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
-		NewAssembleNameField(assemble.AssembleName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
-		NewComponentNameField(assemble.ComponentName),
-		NewDataTplField(assemble.DataTpl), //对于静态模板，无需数据
+		NewRootComponentNameField(slotName.RootComponentName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewSlotNameField(slotName.SlotName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewComponentNameField(slotName.ComponentName),
+		NewDataTplField(slotName.DataTpl), //对于静态模板，无需数据
 	}
 	_, _, _, err = s.RepositoryCommand.Set(fields, customFn)
 	if err != nil {
@@ -72,7 +72,7 @@ func (s AssembleService[A]) Set(assemble Assemble, customFn sqlbuilder.CustomFnS
 	}
 	return nil
 }
-func (s AssembleService[A]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
+func (s SlotService[A]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
 	fields := sqlbuilder.Fields{
 		NewRootComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
@@ -83,7 +83,7 @@ func (s AssembleService[A]) ListByRootComponentName(rootComponentName string, cu
 	return models, nil
 }
 
-func (s AssembleService[A]) Delete(assemble Assemble, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s SlotService[A]) Delete(slotName Slot, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 	ctx := context.Background()
 
 	_, err = s.RepositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
@@ -92,8 +92,8 @@ func (s AssembleService[A]) Delete(assemble Assemble, customFn sqlbuilder.Custom
 		return err
 	}
 	fields := sqlbuilder.Fields{
-		NewRootComponentNameField(assemble.RootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
-		NewAssembleNameField(assemble.AssembleName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewRootComponentNameField(slotName.RootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewSlotNameField(slotName.SlotName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
 	err = s.RepositoryCommand.Delete(fields, customFn)
 	if err != nil {

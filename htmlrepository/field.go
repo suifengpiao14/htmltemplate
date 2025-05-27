@@ -14,8 +14,8 @@ func NewComponentNamesField(componentNames []string) *sqlbuilder.Field {
 	return sqlbuilder.NewStringField(componentNames, componentNameField.Name, componentNameField.Schema.Title, 0)
 }
 
-func NewAssembleNameField(assembleName string) *sqlbuilder.Field {
-	return sqlbuilder.NewStringField(assembleName, "assembleName", "组合名称", 0)
+func NewSlotNameField(slotName string) *sqlbuilder.Field {
+	return sqlbuilder.NewStringField(slotName, "slotName", "组合名称", 0)
 }
 
 func NewTemplateField(template string) *sqlbuilder.Field {
