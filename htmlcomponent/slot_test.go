@@ -9,7 +9,7 @@ import (
 	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
 )
 
-var allComponent = htmlcomponent.AllComponent
+var allComponent = htmlcomponent.AllTemplates
 var xyxzApiIndexSlots = htmlcomponent.Slots{
 
 	{

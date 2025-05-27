@@ -23,7 +23,7 @@ func newComponentSerivce[C any](tableConfig sqlbuilder.TableConfig) ComponentSer
 
 func (s ComponentSerivce[C]) Set(c Template, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
-		NewComponentNameField(c.ComponentName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewTemplateNameField(c.TemplateName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewTemplateField(c.Template).SetRequired(true),
 		NewDataTplField(c.DataTpl), //对于静态模板，无需数据
 	}
@@ -36,7 +36,7 @@ func (s ComponentSerivce[C]) Set(c Template, customFn sqlbuilder.CustomFnSetPara
 
 func (s ComponentSerivce[C]) ListByComponentNames(componentNames []string, customFn sqlbuilder.CustomFnListParam) (models []C, err error) {
 	fields := sqlbuilder.Fields{
-		NewComponentNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewTemplateNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
 	models, err = s.RepositoryQuery.All(fields, customFn)
 	if err != nil {
@@ -61,9 +61,9 @@ func newSlotService[A any](tableConfig sqlbuilder.TableConfig) SlotService[A] {
 
 func (s SlotService[A]) Set(slotName Slot, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
-		NewRootComponentNameField(slotName.TemplateName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewComponentNameField(slotName.TemplateName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewSlotNameField(slotName.SlotName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
-		NewComponentNameField(slotName.ComponentName),
+		NewTemplateNameField(slotName.ComponentName),
 		NewDataTplField(slotName.DataTpl), //对于静态模板，无需数据
 	}
 	_, _, _, err = s.RepositoryCommand.Set(fields, customFn)
@@ -74,7 +74,7 @@ func (s SlotService[A]) Set(slotName Slot, customFn sqlbuilder.CustomFnSetParam)
 }
 func (s SlotService[A]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
 	fields := sqlbuilder.Fields{
-		NewRootComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
 	models, err = s.RepositoryQuery.All(fields, customFn)
 	if err != nil {
@@ -92,7 +92,7 @@ func (s SlotService[A]) Delete(slotName Slot, customFn sqlbuilder.CustomFnDelete
 		return err
 	}
 	fields := sqlbuilder.Fields{
-		NewRootComponentNameField(slotName.TemplateName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewComponentNameField(slotName.TemplateName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewSlotNameField(slotName.SlotName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
 	err = s.RepositoryCommand.Delete(fields, customFn)
@@ -131,7 +131,7 @@ func (s AttributeService[R]) Set(attribute Attribute, customFn sqlbuilder.Custom
 
 func (s AttributeService[R]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
 	fields := sqlbuilder.Fields{
-		NewRootComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
 	models, err = s.RepositoryQuery.All(fields, customFn)
 	if err != nil {

@@ -9,7 +9,7 @@ import (
 )
 
 type Template struct {
-	Name             string `json:"name"`              //模板唯一标识
+	TemplateName     string `json:"templateName"`      //模板唯一标识
 	Template         string `json:"template"`          //HTML 模板内容
 	DataTpl          string `json:"dataTpl"`           // 需要的数据结构描述
 	DataExample      string `json:"dataExample"`       // 示例数据，用于调试
@@ -46,7 +46,7 @@ type Templates []Template
 
 func (cs Templates) GetByName(name string) (c *Template, ok bool) {
 	for _, c := range cs {
-		if strings.EqualFold(c.Name, name) {
+		if strings.EqualFold(c.TemplateName, name) {
 			return &c, true
 		}
 	}

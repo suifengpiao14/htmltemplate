@@ -9,29 +9,29 @@ type TableConfig struct {
 }
 
 var table_component = sqlbuilder.NewTableConfig("t_component").AddColumns(
-	sqlbuilder.NewColumnConfig("Fcomponent_name", sqlbuilder.GetFieldName(NewComponentNameField)),
+	sqlbuilder.NewColumnConfig("Fcomponent_name", sqlbuilder.GetFieldName(NewTemplateNameField)),
 	sqlbuilder.NewColumnConfig("Ftemplate", sqlbuilder.GetFieldName(NewTemplateField)),
 	sqlbuilder.NewColumnConfig("Fdata_tpl", sqlbuilder.GetFieldName(NewDataTplField)),
 ).AddIndexs(sqlbuilder.Index{
 	Unique: true,
 	ColumnNames: func(tableColumns sqlbuilder.ColumnConfigs) (columnNames []string) {
 		columnNames = tableColumns.FieldName2ColumnName(
-			sqlbuilder.GetFieldName(NewComponentNameField),
+			sqlbuilder.GetFieldName(NewTemplateNameField),
 		)
 		return columnNames
 	},
 })
 
 var table_slotName = sqlbuilder.NewTableConfig("t_slotName").AddColumns(
-	sqlbuilder.NewColumnConfig("Froot_component_name", sqlbuilder.GetFieldName(NewRootComponentNameField)),
-	sqlbuilder.NewColumnConfig("Fcomponent_name", sqlbuilder.GetFieldName(NewComponentNameField)),
+	sqlbuilder.NewColumnConfig("Froot_component_name", sqlbuilder.GetFieldName(NewComponentNameField)),
+	sqlbuilder.NewColumnConfig("Fcomponent_name", sqlbuilder.GetFieldName(NewTemplateNameField)),
 	sqlbuilder.NewColumnConfig("FslotName_name", sqlbuilder.GetFieldName(NewSlotNameField)),
 	sqlbuilder.NewColumnConfig("Fdata_tpl", sqlbuilder.GetFieldName(NewDataTplField)),
 ).AddIndexs(sqlbuilder.Index{
 	Unique: true,
 	ColumnNames: func(tableColumns sqlbuilder.ColumnConfigs) (columnNames []string) {
 		columnNames = tableColumns.FieldName2ColumnName(
-			sqlbuilder.GetFieldName(NewRootComponentNameField),
+			sqlbuilder.GetFieldName(NewComponentNameField),
 			sqlbuilder.GetFieldName(NewSlotNameField),
 		)
 		return columnNames
@@ -39,7 +39,7 @@ var table_slotName = sqlbuilder.NewTableConfig("t_slotName").AddColumns(
 })
 
 var table_attribute = sqlbuilder.NewTableConfig("t_attribute").AddColumns(
-	sqlbuilder.NewColumnConfig("Froot_component_name", sqlbuilder.GetFieldName(NewRootComponentNameField)),
+	sqlbuilder.NewColumnConfig("Froot_component_name", sqlbuilder.GetFieldName(NewComponentNameField)),
 	sqlbuilder.NewColumnConfig("Fnode_id", sqlbuilder.GetFieldName(NewNodeIdField)),
 	sqlbuilder.NewColumnConfig("Fattr_name", sqlbuilder.GetFieldName(NewAttributeNameField)),
 	sqlbuilder.NewColumnConfig("Fattr_value", sqlbuilder.GetFieldName(NewAttributeValueField)),
@@ -47,7 +47,7 @@ var table_attribute = sqlbuilder.NewTableConfig("t_attribute").AddColumns(
 	Unique: true,
 	ColumnNames: func(tableColumns sqlbuilder.ColumnConfigs) (columnNames []string) {
 		columnNames = tableColumns.FieldName2ColumnName(
-			sqlbuilder.GetFieldName(NewRootComponentNameField),
+			sqlbuilder.GetFieldName(NewComponentNameField),
 			sqlbuilder.GetFieldName(NewNodeIdField),
 			sqlbuilder.GetFieldName(NewAttributeNameField),
 		)

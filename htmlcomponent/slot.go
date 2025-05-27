@@ -133,9 +133,9 @@ func (as Slots) GetRootNode(componentName string) (node *Slot, err error) {
 
 }
 
-func (as Slots) GetByNodeId(nodeId string) (slotName *Slot, index int) {
+func (as Slots) GetBySlotName(slotName string) (slot *Slot, index int) {
 	for i, relation := range as {
-		if relation.SlotName == nodeId {
+		if relation.SlotName == slotName {
 			return &relation, i
 		}
 	}
@@ -169,16 +169,16 @@ func (nodes Slots) resolveDependence() (ordered Slots) {
 	// 构建依赖映射
 	for _, a := range nodes {
 		a.dependences = a.GetDependence()
-		_, aIndex := ordered.GetByNodeId(a.SlotName)
+		_, aIndex := ordered.GetBySlotName(a.SlotName)
 		if aIndex < 0 {
 			aIndex = maxIndex // 默认增加到最后
 		}
 		for _, dep := range a.dependences {
-			dependence, fullItemsIndex := nodes.GetByNodeId(dep)
+			dependence, fullItemsIndex := nodes.GetBySlotName(dep)
 			if fullItemsIndex < 0 {
 				continue
 			}
-			_, existsIndex := ordered.GetByNodeId(dep)
+			_, existsIndex := ordered.GetBySlotName(dep)
 			if existsIndex < 0 {
 				ordered.InsertBefore(*dependence, aIndex)
 			}
@@ -213,7 +213,7 @@ func (nodes Slots) RenderTemplate(cs Templates, attributes Attributes, data map[
 		}
 		html, err := componentTpl.Render(templateData)
 		if err != nil {
-			return nil, errors.WithMessagef(err, "render component %s error", componentTpl.Name)
+			return nil, errors.WithMessagef(err, "render component %s error", componentTpl.TemplateName)
 		}
 		segments[node.GetOutputKey()] = html
 	}

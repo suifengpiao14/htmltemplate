@@ -8,7 +8,7 @@ import (
 )
 
 var XyxzapiPageIndex = Template{
-	Name: "xyxzapi/index",
+	TemplateName: "xyxzapi/index",
 	Template: `
 		<div class="flex flex-col w-full ">
 		背景色-黄色
@@ -20,7 +20,7 @@ var XyxzapiPageIndex = Template{
 }
 
 var XyxzOrderToolbar = Template{
-	Name: "xyxzapi/orderToolbar",
+	TemplateName: "xyxzapi/orderToolbar",
 	Template: `
 <div class="flex flex-row w-full ">
 <div>手动建单</div>
@@ -33,7 +33,7 @@ var XyxzOrderToolbar = Template{
 }
 
 var Container = Template{
-	Name: "suifengpiao14/container",
+	TemplateName: "suifengpiao14/container",
 	Template: `
 	<div>
 	{{#children}}
@@ -51,7 +51,7 @@ var Container = Template{
 }
 
 var XyxzOrderListItem = Template{
-	Name: "xyxzapi/orderListItem",
+	TemplateName: "xyxzapi/orderListItem",
 	Template: `
 	{{#orders}}
 	<div data-fullname="{{namespace}}/orders-item">
@@ -107,7 +107,7 @@ var XyxzOrderListItem = Template{
 }
 
 var TabComponent = Template{
-	Name: "suifengpiao14/tab",
+	TemplateName: "suifengpiao14/tab",
 	Template: `
 	 	<div data-fullname="{{namespace}}/tab" role="tablist" class="tabs tabs-bordered "
 		x-data='$tab({"tab_eventName":"{{eventName}}","tab_activeTabId":"{{activeTabId}}"})'>
@@ -142,7 +142,7 @@ var TabComponent = Template{
 }
 
 var TableComponent = Template{
-	Name: "suifengpiao14/table",
+	TemplateName: "suifengpiao14/table",
 	Template: `
 	<table class="min-w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
             <thead class="bg-indigo-600 text-white">
@@ -200,7 +200,7 @@ var TableComponent = Template{
 }
 
 var SearchFormComponent = Template{
-	Name: "suifengpiao14/searchForm",
+	TemplateName: "suifengpiao14/searchForm",
 	Template: `
  <form hx-post="{{hxpost}}" hx-target="{{hxtarget}}" hx-ext="json-enc-custom"
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 bg-white rounded-lg shadow-md">
@@ -277,7 +277,7 @@ var SearchFormComponent = Template{
 }
 
 var HtmlDocumentComponent = Template{
-	Name: "suifengpiao14/htmlDocument",
+	TemplateName: "suifengpiao14/htmlDocument",
 	Template: `
 	<!DOCTYPE html>
 <html lang="en">
@@ -348,7 +348,7 @@ var HtmlDocumentComponent = Template{
 
 var HtmxAlpinejsPageComponent = Template{}
 
-var AllComponent = Templates{
+var AllTemplates = Templates{
 	TabComponent,
 	XyxzapiPageIndex,
 	XyxzOrderListItem,

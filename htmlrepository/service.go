@@ -24,26 +24,26 @@ func NewHtmlTemplateApiService(dbHander sqlbuilder.Handler, customTableFn func(t
 	}
 }
 
-func (s HtmlTemplateApiService) Render(componentRootName string, data map[string]any) (rootComponentHtml string, err error) {
-	rootComponent, err := s.GetComponent(componentRootName)
+func (s HtmlTemplateApiService) Render(componentName string, data map[string]any) (componentHtml string, err error) {
+	rootComponent, err := s.GetComponent(componentName)
 	if err != nil {
 		return "", err
 	}
-	rootComponentHtml, err = rootComponent.Render(data)
+	componentHtml, err = rootComponent.Render(data)
 	if err != nil {
 		return "", err
 	}
-	return rootComponentHtml, nil
+	return componentHtml, nil
 }
 
-func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComponentHtml htmlcomponent.Component, err error) {
-	slotNames, err := s.slotNameService.ListByRootComponentName(componentRootName, func(listParam *sqlbuilder.ListParam) {
+func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtml htmlcomponent.Component, err error) {
+	slotNames, err := s.slotNameService.ListByRootComponentName(componentName, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
-						sqlbuilder.GetFieldName(NewRootComponentNameField),
 						sqlbuilder.GetFieldName(NewComponentNameField),
+						sqlbuilder.GetFieldName(NewTemplateNameField),
 						sqlbuilder.GetFieldName(NewSlotNameField),
 						sqlbuilder.GetFieldName(NewDataTplField),
 					).DbNameWithAlias()
@@ -54,18 +54,18 @@ func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComp
 		})
 	})
 	if err != nil {
-		return rootComponentHtml, err
+		return componentHtml, err
 	}
-	rootComponentHtml.Slots = ToHtmlSlots(slotNames...)
-	componentNames := rootComponentHtml.Slots.ComponentNames()
-	componentNames = append(componentNames, componentRootName)
+	componentHtml.Slots = ToHtmlSlots(slotNames...)
+	componentNames := componentHtml.Slots.ComponentNames()
+	componentNames = append(componentNames, componentName)
 	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
 	components, err := s.componentService.ListByComponentNames(componentNames, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
-						sqlbuilder.GetFieldName(NewComponentNameField),
+						sqlbuilder.GetFieldName(NewTemplateNameField),
 						sqlbuilder.GetFieldName(NewTemplateField),
 						sqlbuilder.GetFieldName(NewDataTplField),
 					).DbNameWithAlias()
@@ -76,15 +76,16 @@ func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComp
 		})
 	})
 	if err != nil {
-		return rootComponentHtml, err
+		return componentHtml, err
 	}
-	rootComponentHtml.Templates = ToHtmlComponents(components...)
-	attrs, err := s.attributeService.ListByRootComponentName(componentRootName, func(listParam *sqlbuilder.ListParam) {
+	componentHtml.Templates = ToHtmlComponents(components...)
+	attrs, err := s.attributeService.ListByRootComponentName(componentName, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
 						sqlbuilder.GetFieldName(NewNodeIdField),
+						sqlbuilder.GetFieldName(NewSlotNameField),
 						sqlbuilder.GetFieldName(NewAttributeNameField),
 						sqlbuilder.GetFieldName(NewAttributeValueField),
 					).DbNameWithAlias()
@@ -95,11 +96,11 @@ func (s HtmlTemplateApiService) GetComponent(componentRootName string) (rootComp
 		})
 	})
 	if err != nil {
-		return rootComponentHtml, err
+		return componentHtml, err
 	}
-	rootComponentHtml.Name = componentRootName
-	rootComponentHtml.Attributes = ToHtmlAttributes(attrs...)
-	return rootComponentHtml, nil
+	componentHtml.Name = componentName
+	componentHtml.Attributes = ToHtmlAttributes(attrs...)
+	return componentHtml, nil
 }
 
 type HtmlTemplateAdminService[C any, A any, R any] struct {

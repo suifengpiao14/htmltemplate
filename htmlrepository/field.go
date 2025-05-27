@@ -2,20 +2,20 @@ package htmlrepository
 
 import "github.com/suifengpiao14/sqlbuilder"
 
+func NewTemplateNameField(componentName string) *sqlbuilder.Field {
+	return sqlbuilder.NewStringField(componentName, "templateName", "模版名称", 0)
+}
 func NewComponentNameField(componentName string) *sqlbuilder.Field {
 	return sqlbuilder.NewStringField(componentName, "componentName", "组件名称", 0)
 }
-func NewRootComponentNameField(rootComponentName string) *sqlbuilder.Field {
-	return sqlbuilder.NewStringField(rootComponentName, "rootComponentName", "根组件名称", 0)
-}
 
-func NewComponentNamesField(componentNames []string) *sqlbuilder.Field {
-	componentNameField := NewComponentNameField("")
+func NewTemplateNamesField(componentNames []string) *sqlbuilder.Field {
+	componentNameField := NewTemplateNameField("")
 	return sqlbuilder.NewStringField(componentNames, componentNameField.Name, componentNameField.Schema.Title, 0)
 }
 
 func NewSlotNameField(slotName string) *sqlbuilder.Field {
-	return sqlbuilder.NewStringField(slotName, "slotName", "组合名称", 0)
+	return sqlbuilder.NewStringField(slotName, "slotName", "槽名称", 0)
 }
 
 func NewTemplateField(template string) *sqlbuilder.Field {

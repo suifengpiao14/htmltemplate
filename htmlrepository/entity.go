@@ -8,10 +8,10 @@ import (
 // 这里之所以重新声明一遍，主要是解耦 htmlcomponent包,和htmlrepository包之间的耦合关系，这里定义的gorm 必须和NewXXXField.name保持一致
 
 type Template struct {
-	ComponentName string `gorm:"column:componentName" json:"componentName"`
-	Template      string `gorm:"column:template" json:"template"`
-	DataTpl       string `gorm:"column:dataTpl" json:"dataTpl"`
-	DataExample   string `gorm:"column:dataExample" json:"dataExample"` // 示例数据，用于调试
+	TemplateName string `gorm:"column:templateName" json:"templateName"`
+	Template     string `gorm:"column:template" json:"template"`
+	DataTpl      string `gorm:"column:dataTpl" json:"dataTpl"`
+	DataExample  string `gorm:"column:dataExample" json:"dataExample"` // 示例数据，用于调试
 }
 type Slot struct {
 	TemplateName  string `gorm:"column:templateName" json:"templateName"`
@@ -30,8 +30,8 @@ type Attribute struct {
 
 func ToHtmlSlot(slotName Slot) htmlcomponent.Slot {
 	return htmlcomponent.Slot{
-		ComponentName: slotName.TemplateName,
-		TemplateName:  slotName.ComponentName,
+		ComponentName: slotName.ComponentName,
+		TemplateName:  slotName.TemplateName,
 		SlotName:      slotName.SlotName,
 		DataTpl:       slotName.DataTpl,
 		DataExample:   slotName.DataExample,
@@ -61,10 +61,10 @@ func ToHtmlAttributes(attributes ...Attribute) htmlcomponent.Attributes {
 
 func ToHtmlComponent(component Template) htmlcomponent.Template {
 	return htmlcomponent.Template{
-		Name:        component.ComponentName,
-		Template:    component.Template,
-		DataTpl:     component.DataTpl,
-		DataExample: component.DataExample,
+		TemplateName: component.TemplateName,
+		Template:     component.Template,
+		DataTpl:      component.DataTpl,
+		DataExample:  component.DataExample,
 	}
 }
 
