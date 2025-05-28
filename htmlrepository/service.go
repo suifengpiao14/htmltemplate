@@ -2,12 +2,11 @@ package htmlrepository
 
 import (
 	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
-	"github.com/suifengpiao14/memorytable"
 	"github.com/suifengpiao14/sqlbuilder"
 )
 
 type HtmlTemplateApiService struct {
-	componentService ComponentSerivce[Template]
+	componentService TemplateSerivce[Template]
 	slotNameService  SlotService[Slot]
 	attributeService AttributeService[Attribute]
 }
@@ -57,10 +56,8 @@ func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtm
 		return componentHtml, err
 	}
 	componentHtml.Slots = ToHtmlSlots(slotNames...)
-	componentNames := componentHtml.Slots.ComponentNames()
-	componentNames = append(componentNames, componentName)
-	componentNames = memorytable.NewTable(componentNames...).Uniqueue(func(row string) (key string) { return key }).ToSlice()
-	components, err := s.componentService.ListByComponentNames(componentNames, func(listParam *sqlbuilder.ListParam) {
+	templateNames := componentHtml.Slots.TemplateNames()
+	templates, err := s.componentService.ListByTemplateNames(templateNames, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
@@ -78,8 +75,8 @@ func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtm
 	if err != nil {
 		return componentHtml, err
 	}
-	componentHtml.Templates = ToHtmlComponents(components...)
-	attrs, err := s.attributeService.ListByRootComponentName(componentName, func(listParam *sqlbuilder.ListParam) {
+	componentHtml.Templates = ToHtmlComponents(templates...)
+	attrs, err := s.attributeService.ListByTemplateNames(templateNames, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
@@ -104,7 +101,7 @@ func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtm
 }
 
 type HtmlTemplateAdminService[C any, A any, R any] struct {
-	Component ComponentSerivce[C]
+	Template  TemplateSerivce[C]
 	Slot      SlotService[A]
 	Attribute AttributeService[R]
 }
@@ -115,7 +112,7 @@ func NewHtmlTemplateAdminService[C any, A any, R any](dbHander sqlbuilder.Handle
 	slotNameService := newSlotService[A](tableConfig.Slot)
 	attributeService := newAttributeService[R](tableConfig.Attribute)
 	return HtmlTemplateAdminService[C, A, R]{
-		Component: componentService,
+		Template:  componentService,
 		Slot:      slotNameService,
 		Attribute: attributeService,
 	}

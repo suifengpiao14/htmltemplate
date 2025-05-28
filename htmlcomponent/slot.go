@@ -142,15 +142,15 @@ func (as Slots) GetBySlotName(slotName string) (slot *Slot, index int) {
 	return nil, -1
 }
 
-func (as Slots) ComponentNames() (componentNames []string) {
-	componentNames = make([]string, 0)
+func (as Slots) TemplateNames() (templateNames []string) {
+	templateNames = make([]string, 0)
 	for _, a := range as {
-		componentNames = append(componentNames, a.TemplateName)
+		templateNames = append(templateNames, a.TemplateName)
 	}
-	componentNames = memorytable.NewTable(componentNames...).FilterEmpty().Uniqueue(func(row string) (key string) {
+	templateNames = memorytable.NewTable(templateNames...).FilterEmpty().Uniqueue(func(row string) (key string) {
 		return row
 	})
-	return componentNames
+	return templateNames
 }
 
 func (as *Slots) Insert(a Slot, index int) {

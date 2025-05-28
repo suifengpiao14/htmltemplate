@@ -7,21 +7,21 @@ import (
 	"github.com/suifengpiao14/sqlbuilder"
 )
 
-type ComponentSerivce[C any] struct {
+type TemplateSerivce[C any] struct {
 	sqlbuilder.RepositoryQuery[C]
 	sqlbuilder.RepositoryCommand
 }
 
-func newComponentSerivce[C any](tableConfig sqlbuilder.TableConfig) ComponentSerivce[C] {
+func newComponentSerivce[C any](tableConfig sqlbuilder.TableConfig) TemplateSerivce[C] {
 	repositoryQuery := sqlbuilder.NewRepositoryQuery[C](tableConfig)
 	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return ComponentSerivce[C]{
+	return TemplateSerivce[C]{
 		RepositoryQuery:   repositoryQuery,
 		RepositoryCommand: repositoryCommand,
 	}
 }
 
-func (s ComponentSerivce[C]) Set(c Template, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s TemplateSerivce[C]) Set(c Template, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewTemplateNameField(c.TemplateName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewTemplateField(c.Template).SetRequired(true),
@@ -34,7 +34,7 @@ func (s ComponentSerivce[C]) Set(c Template, customFn sqlbuilder.CustomFnSetPara
 	return nil
 }
 
-func (s ComponentSerivce[C]) ListByComponentNames(componentNames []string, customFn sqlbuilder.CustomFnListParam) (models []C, err error) {
+func (s TemplateSerivce[C]) ListByTemplateNames(componentNames []string, customFn sqlbuilder.CustomFnListParam) (models []C, err error) {
 	fields := sqlbuilder.Fields{
 		NewTemplateNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
@@ -129,9 +129,9 @@ func (s AttributeService[R]) Set(attribute Attribute, customFn sqlbuilder.Custom
 	return nil
 }
 
-func (s AttributeService[R]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
+func (s AttributeService[R]) ListByTemplateNames(templateNames []string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
 	fields := sqlbuilder.Fields{
-		NewComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewTemplateNamesField(templateNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
 	models, err = s.RepositoryQuery.All(fields, customFn)
 	if err != nil {
