@@ -84,7 +84,7 @@ func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtm
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
-						sqlbuilder.GetFieldName(NewNodeIdField),
+						sqlbuilder.GetFieldName(NewTagIdField),
 						sqlbuilder.GetFieldName(NewSlotNameField),
 						sqlbuilder.GetFieldName(NewAttributeNameField),
 						sqlbuilder.GetFieldName(NewAttributeValueField),

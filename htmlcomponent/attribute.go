@@ -16,9 +16,10 @@ import (
 
 */
 
-type Attribute struct {
-	TagId          string `json:"tagId"`    // html标签id
-	SlotName       string `json:"slotName"` // component node id(同一个template 在一个组件中可能用于多次,比如按钮-确定/取消按钮,所以需要携带NodeId区分不同节点)
+type Attribute struct { // Attribute 属于template的固定数据，不一定属于某个Component，所以不能添加componentName属性
+	SlotName       string `json:"slotName"`     // component node id(同一个template 在一个组件中可能用于多次,比如按钮-确定/取消按钮,所以需要携带NodeId区分不同节点)
+	TemplateName   string `json:"templateName"` // 模板名称，用于区分不同组件的相同节点
+	TagId          string `json:"tagId"`        // html标签id
 	AttributeName  string `json:"key"`
 	AttributeValue string `json:"value"`
 	sort           int

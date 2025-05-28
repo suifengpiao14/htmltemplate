@@ -26,8 +26,8 @@ func NewDataTplField(dataTpl string) *sqlbuilder.Field {
 	return sqlbuilder.NewStringField(dataTpl, "dataTpl", "数据模板", 0)
 }
 
-func NewNodeIdField(nodeId string) *sqlbuilder.Field {
-	return sqlbuilder.NewStringField(nodeId, "nodeId", "节点ID", 0)
+func NewTagIdField(nodeId string) *sqlbuilder.Field {
+	return sqlbuilder.NewStringField(nodeId, "tagId", "html tag 标识", 0)
 }
 
 func NewAttributeNameField(attributeKey string) *sqlbuilder.Field {
