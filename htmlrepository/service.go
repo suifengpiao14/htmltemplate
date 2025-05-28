@@ -24,11 +24,11 @@ func NewHtmlTemplateApiService(dbHander sqlbuilder.Handler, customTableFn func(t
 }
 
 func (s HtmlTemplateApiService) Render(componentName string, data map[string]any) (componentHtml string, err error) {
-	rootComponent, err := s.GetComponent(componentName)
+	component, err := s.GetComponent(componentName)
 	if err != nil {
 		return "", err
 	}
-	componentHtml, err = rootComponent.Render(data)
+	componentHtml, err = component.Render(data)
 	if err != nil {
 		return "", err
 	}

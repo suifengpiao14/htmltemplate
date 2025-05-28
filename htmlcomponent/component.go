@@ -20,21 +20,15 @@ func NewComponent(name string, slots Slots, components Templates, attributes Att
 	}
 }
 
-func (p Component) Render(data map[string]any) (rootComponentHtml string, err error) {
-	componentName := p.Name
+func (p Component) Render(data map[string]any) (componentHtml string, err error) {
 	slots := p.Slots
 	templates := p.Templates
-	variables, err := slots.RenderTemplate(templates, p.Attributes, data)
+	variables, err := slots.Render(templates, p.Attributes, data)
 	if err != nil {
 		return "", err
 	}
-
-	rootNode, err := slots.GetRootNode(componentName)
-	if err != nil {
-
-		return "", err
-	}
-	val := variables[rootNode.GetOutputKey()]
-	rootComponentHtml = cast.ToString(val)
-	return rootComponentHtml, nil
+	rootSlot := slots.RootSlot()
+	val := variables[rootSlot.GetOutputKey()]
+	componentHtml = cast.ToString(val)
+	return componentHtml, nil
 }

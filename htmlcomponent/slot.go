@@ -163,18 +163,18 @@ func (as *Slots) InsertBefore(a Slot, index int) {
 }
 
 // resolveDependence 解析依赖关系，根据组件依赖的变量,以及组件的PlaceHolder,决定渲染顺序
-func (nodes Slots) resolveDependence() (ordered Slots) {
+func (slots Slots) resolveDependence() (ordered Slots) {
 	ordered = make(Slots, 0)
-	maxIndex := len(nodes)
+	maxIndex := len(slots)
 	// 构建依赖映射
-	for _, a := range nodes {
+	for _, a := range slots {
 		a.dependences = a.GetDependence()
 		_, aIndex := ordered.GetBySlotName(a.SlotName)
 		if aIndex < 0 {
 			aIndex = maxIndex // 默认增加到最后
 		}
 		for _, dep := range a.dependences {
-			dependence, fullItemsIndex := nodes.GetBySlotName(dep)
+			dependence, fullItemsIndex := slots.GetBySlotName(dep)
 			if fullItemsIndex < 0 {
 				continue
 			}
@@ -190,9 +190,18 @@ func (nodes Slots) resolveDependence() (ordered Slots) {
 	return ordered
 }
 
-func (nodes Slots) RenderTemplate(cs Templates, attributes Attributes, data map[string]any) (segments map[string]any, err error) {
+func (slots Slots) RootSlot() (rootSlot Slot) {
+	ordered := slots.resolveDependence()
+	if len(ordered) == 0 {
+		return Slot{}
+	}
+	last := ordered[len(ordered)-1]
+	return last
+}
+
+func (slots Slots) Render(cs Templates, attributes Attributes, data map[string]any) (segments map[string]any, err error) {
 	segments = make(map[string]any, 0)
-	ordered := nodes.resolveDependence()
+	ordered := slots.resolveDependence()
 	for _, node := range ordered {
 		componentTpl, ok := cs.GetByName(node.TemplateName)
 		if !ok {
