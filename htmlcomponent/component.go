@@ -11,11 +11,11 @@ type Component struct {
 	Attributes Attributes
 }
 
-func NewComponent(name string, slots Slots, components Templates, attributes Attributes) *Component {
+func NewComponent(name string, slots Slots, templates Templates, attributes Attributes) *Component {
 	return &Component{
 		Name:       name,
 		Slots:      slots,
-		Templates:  components,
+		Templates:  templates,
 		Attributes: attributes,
 	}
 }
