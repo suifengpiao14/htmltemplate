@@ -167,13 +167,13 @@ func (slots Slots) resolveDependence() (ordered Slots) {
 	ordered = make(Slots, 0)
 	maxIndex := len(slots)
 	// 构建依赖映射
-	for _, a := range slots {
-		a.dependences = a.GetDependence()
-		_, aIndex := ordered.GetBySlotName(a.SlotName)
+	for _, slot := range slots {
+		slot.dependences = slot.GetDependence()
+		_, aIndex := ordered.GetBySlotName(slot.SlotName)
 		if aIndex < 0 {
 			aIndex = maxIndex // 默认增加到最后
 		}
-		for _, dep := range a.dependences {
+		for _, dep := range slot.dependences {
 			dependence, fullItemsIndex := slots.GetBySlotName(dep)
 			if fullItemsIndex < 0 {
 				continue
@@ -184,7 +184,7 @@ func (slots Slots) resolveDependence() (ordered Slots) {
 			}
 		}
 		if aIndex == maxIndex {
-			ordered.Insert(a, aIndex)
+			ordered.Insert(slot, aIndex)
 		}
 	}
 	return ordered
