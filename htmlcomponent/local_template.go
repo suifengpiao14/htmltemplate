@@ -106,7 +106,7 @@ var XyxzOrderListItem = Template{
 `,
 }
 
-var TabComponent = Template{
+var TabTemplate = Template{
 	TemplateName: "suifengpiao14/tab",
 	Template: `
 	 	<div data-fullname="{{namespace}}/tab" role="tablist" class="tabs tabs-bordered "
@@ -141,7 +141,7 @@ var TabComponent = Template{
 	`,
 }
 
-var TableComponent = Template{
+var TableTemplate = Template{
 	TemplateName: "suifengpiao14/table",
 	Template: `
 	<table class="min-w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
@@ -199,7 +199,7 @@ var TableComponent = Template{
 `,
 }
 
-var SearchFormComponent = Template{
+var SearchFormTemplate = Template{
 	TemplateName: "suifengpiao14/searchForm",
 	Template: `
  <form hx-post="{{hxpost}}" hx-target="{{hxtarget}}" hx-ext="json-enc-custom"
@@ -276,7 +276,7 @@ var SearchFormComponent = Template{
 `,
 }
 
-var HtmlDocumentComponent = Template{
+var HtmlDocumentTemplate = Template{
 	TemplateName: "suifengpiao14/htmlDocument",
 	Template: `
 	<!DOCTYPE html>
@@ -349,14 +349,14 @@ var HtmlDocumentComponent = Template{
 var HtmxAlpinejsPageComponent = Template{}
 
 var AllTemplates = Templates{
-	TabComponent,
+	TabTemplate,
 	XyxzapiPageIndex,
 	XyxzOrderListItem,
 	XyxzOrderToolbar,
 	Container,
-	TableComponent,
-	SearchFormComponent,
-	HtmlDocumentComponent,
+	TableTemplate,
+	SearchFormTemplate,
+	HtmlDocumentTemplate,
 }
 
 type TableData struct {

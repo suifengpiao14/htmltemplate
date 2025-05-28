@@ -109,9 +109,9 @@ func (as Slots) First() (slotName Slot, err error) {
 
 }
 
-func (as Slots) FilterByComponentName(RootComponentName string) (onePageSlots Slots) {
+func (as Slots) FilterByComponentName(componentName string) (onePageSlots Slots) {
 	rows := memorytable.NewTable(as...).Where(func(a Slot) bool {
-		return a.ComponentName == RootComponentName
+		return a.ComponentName == componentName
 	}).ToSlice()
 	return rows
 }
@@ -121,17 +121,18 @@ func (as Slots) Filter(filterFn func(a Slot) bool) (subSlots Slots) {
 	}).ToSlice()
 	return rows
 }
-func (as Slots) GetRootNode(componentName string) (node *Slot, err error) {
-	node, err = memorytable.NewTable(as...).GetOneWithError(func(a Slot) bool {
-		return a.TemplateName == componentName
-	})
-	if err != nil {
-		err = errors.WithMessagef(err, "componentName:%s", componentName)
-		return nil, err
-	}
-	return node, nil
 
-}
+// func (as Slots) GetRootNode(componentName string) (node *Slot, err error) {
+// 	node, err = memorytable.NewTable(as...).GetOneWithError(func(a Slot) bool {
+// 		return a.TemplateName == componentName
+// 	})
+// 	if err != nil {
+// 		err = errors.WithMessagef(err, "componentName:%s", componentName)
+// 		return nil, err
+// 	}
+// 	return node, nil
+
+// }
 
 func (as Slots) GetBySlotName(slotName string) (slot *Slot, index int) {
 	for i, relation := range as {

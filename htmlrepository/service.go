@@ -13,7 +13,7 @@ type HtmlTemplateApiService struct {
 
 func NewHtmlTemplateApiService(dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) *HtmlTemplateApiService {
 	tableConfig := CustomTableConfig(dbHander, customTableFn)
-	componentService := newComponentSerivce[Template](tableConfig.Component)
+	componentService := newComponentSerivce[Template](tableConfig.Template)
 	slotNameService := newSlotService[Slot](tableConfig.Slot)
 	attributeService := newAttributeService[Attribute](tableConfig.Attribute)
 	return &HtmlTemplateApiService{
@@ -36,7 +36,7 @@ func (s HtmlTemplateApiService) Render(componentName string, data map[string]any
 }
 
 func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtml htmlcomponent.Component, err error) {
-	slotNames, err := s.slotNameService.ListByRootComponentName(componentName, func(listParam *sqlbuilder.ListParam) {
+	slotNames, err := s.slotNameService.ListByComponentName(componentName, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
@@ -81,8 +81,9 @@ func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtm
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 					setSelectColumns := f.GetTable().Columns.FilterByFieldName(
-						sqlbuilder.GetFieldName(NewTagIdField),
 						sqlbuilder.GetFieldName(NewSlotNameField),
+						sqlbuilder.GetFieldName(NewTemplateNameField),
+						sqlbuilder.GetFieldName(NewTagIdField),
 						sqlbuilder.GetFieldName(NewAttributeNameField),
 						sqlbuilder.GetFieldName(NewAttributeValueField),
 					).DbNameWithAlias()
@@ -108,7 +109,7 @@ type HtmlTemplateAdminService[C any, A any, R any] struct {
 
 func NewHtmlTemplateAdminService[C any, A any, R any](dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) HtmlTemplateAdminService[C, A, R] {
 	tableConfig := CustomTableConfig(dbHander, customTableFn)
-	componentService := newComponentSerivce[C](tableConfig.Component)
+	componentService := newComponentSerivce[C](tableConfig.Template)
 	slotNameService := newSlotService[A](tableConfig.Slot)
 	attributeService := newAttributeService[R](tableConfig.Attribute)
 	return HtmlTemplateAdminService[C, A, R]{

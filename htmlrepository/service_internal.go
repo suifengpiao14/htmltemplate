@@ -72,9 +72,9 @@ func (s SlotService[A]) Set(slotName Slot, customFn sqlbuilder.CustomFnSetParam)
 	}
 	return nil
 }
-func (s SlotService[A]) ListByRootComponentName(rootComponentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
+func (s SlotService[A]) ListByComponentName(componentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
 	fields := sqlbuilder.Fields{
-		NewComponentNameField(rootComponentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
+		NewComponentNameField(componentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
 	models, err = s.RepositoryQuery.All(fields, customFn)
 	if err != nil {

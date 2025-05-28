@@ -3,12 +3,12 @@ package htmlrepository
 import "github.com/suifengpiao14/sqlbuilder"
 
 type TableConfig struct {
-	Component sqlbuilder.TableConfig
+	Template  sqlbuilder.TableConfig
 	Slot      sqlbuilder.TableConfig
 	Attribute sqlbuilder.TableConfig
 }
 
-var table_component = sqlbuilder.NewTableConfig("t_template").AddColumns(
+var table_template = sqlbuilder.NewTableConfig("t_template").AddColumns(
 	sqlbuilder.NewColumnConfig("Ftemplate_name", sqlbuilder.GetFieldName(NewTemplateNameField)),
 	sqlbuilder.NewColumnConfig("Ftemplate", sqlbuilder.GetFieldName(NewTemplateField)),
 	sqlbuilder.NewColumnConfig("Fdata_tpl", sqlbuilder.GetFieldName(NewDataTplField)),
@@ -60,12 +60,12 @@ var table_attribute = sqlbuilder.NewTableConfig("t_attribute").AddColumns(
 // CustomTableConfig 初始化表配置信息
 func CustomTableConfig(dbHandler sqlbuilder.Handler, configFn func(table TableConfig) (configedTable TableConfig)) TableConfig {
 	var tableConfig = TableConfig{
-		Component: table_component,
+		Template:  table_template,
 		Slot:      table_slotName,
 		Attribute: table_attribute,
 	}
 
-	tableConfig.Component = tableConfig.Component.WithHandler(dbHandler)
+	tableConfig.Template = tableConfig.Template.WithHandler(dbHandler)
 	tableConfig.Slot = tableConfig.Slot.WithHandler(dbHandler)
 	tableConfig.Attribute = tableConfig.Attribute.WithHandler(dbHandler)
 	if configFn != nil {

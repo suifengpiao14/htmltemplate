@@ -9,7 +9,7 @@ import (
 	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
 )
 
-var allComponent = htmlcomponent.AllTemplates
+var allTemplate = htmlcomponent.AllTemplates
 var xyxzApiIndexSlots = htmlcomponent.Slots{
 
 	{
@@ -149,7 +149,7 @@ func TestPage(t *testing.T) {
 			},
 		},
 	}
-	variables, err := as.Render(allComponent, nil, allData)
+	variables, err := as.Render(allTemplate, nil, allData)
 	require.NoError(t, err)
 	indexHtml := variables["indexOutput"]
 	fmt.Println(indexHtml)
@@ -163,7 +163,7 @@ func TestGetDependence(t *testing.T) {
 }
 
 func TestRanderTable(t *testing.T) {
-	rootComponentName := "html/component"
+	componentName := "html/component"
 	var TestHtmlComponentIndexSlots = htmlcomponent.Slots{
 		{
 			ComponentName: "html/component",
@@ -176,13 +176,13 @@ func TestRanderTable(t *testing.T) {
 		},
 	}
 
-	as := TestHtmlComponentIndexSlots.FilterByComponentName(rootComponentName)
+	as := TestHtmlComponentIndexSlots.FilterByComponentName(componentName)
 	data := rows2TableData()
 	rowsMap := funcs.Struct2JsonMap(data)
 	allData := map[string]any{
 		"tableInput": rowsMap,
 	}
-	variables, err := as.Render(allComponent, nil, allData)
+	variables, err := as.Render(allTemplate, nil, allData)
 	require.NoError(t, err)
 	indexHtml := variables["tableOutput"]
 	fmt.Println(indexHtml)
@@ -247,8 +247,8 @@ func TestRanderSubPage(t *testing.T) {
 		},
 	}
 
-	rootComponentName := "html/component"
-	as := TestHtmlComponentIndexSlots.FilterByComponentName(rootComponentName)
+	componentName := "html/component"
+	as := TestHtmlComponentIndexSlots.FilterByComponentName(componentName)
 	tableDataMap := map[string]any{
 		"items": []map[string]any{
 			{
@@ -267,7 +267,7 @@ func TestRanderSubPage(t *testing.T) {
 	allData := map[string]any{
 		"tableInput": tableDataMap,
 	}
-	variables, err := as.Render(allComponent, nil, allData)
+	variables, err := as.Render(allTemplate, nil, allData)
 	require.NoError(t, err)
 	indexHtml := variables["tableOutput"]
 	fmt.Println(indexHtml)

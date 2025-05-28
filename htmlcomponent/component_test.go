@@ -12,7 +12,7 @@ func TestComponent(t *testing.T) {
 	var component = htmlcomponent.Component{
 		Name:      "xyxzapi/index",
 		Slots:     xyxzApiIndexSlots,
-		Templates: allComponent,
+		Templates: allTemplate,
 	}
 	data := map[string]any{}
 	html, err := component.Render(data)
