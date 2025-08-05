@@ -6,16 +6,16 @@ import (
 )
 
 type HtmlTemplateApiService struct {
-	componentService TemplateSerivce[Template]
-	slotNameService  SlotService[Slot]
-	attributeService AttributeService[Attribute]
+	componentService TemplateSerivce
+	slotNameService  SlotService
+	attributeService AttributeService
 }
 
 func NewHtmlTemplateApiService(dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) *HtmlTemplateApiService {
 	tableConfig := CustomTableConfig(dbHander, customTableFn)
-	componentService := newComponentSerivce[Template](tableConfig.Template)
-	slotNameService := newSlotService[Slot](tableConfig.Slot)
-	attributeService := newAttributeService[Attribute](tableConfig.Attribute)
+	componentService := newComponentSerivce(tableConfig.Template)
+	slotNameService := newSlotService(tableConfig.Slot)
+	attributeService := newAttributeService(tableConfig.Attribute)
 	return &HtmlTemplateApiService{
 		componentService: componentService,
 		slotNameService:  slotNameService,
@@ -36,7 +36,8 @@ func (s HtmlTemplateApiService) Render(componentName string, data map[string]any
 }
 
 func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtml htmlcomponent.Component, err error) {
-	slotNames, err := s.slotNameService.ListByComponentName(componentName, func(listParam *sqlbuilder.ListParam) {
+	slotNames := make([]Slot, 0)
+	err = s.slotNameService.ListByComponentName(&slotNames, componentName, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
@@ -57,7 +58,8 @@ func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtm
 	}
 	componentHtml.Slots = ToHtmlSlots(slotNames...)
 	templateNames := componentHtml.Slots.TemplateNames()
-	templates, err := s.componentService.ListByTemplateNames(templateNames, func(listParam *sqlbuilder.ListParam) {
+	templates := make([]Template, 0)
+	err = s.componentService.ListByTemplateNames(&templates, templateNames, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
@@ -76,7 +78,8 @@ func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtm
 		return componentHtml, err
 	}
 	componentHtml.Templates = ToHtmlComponents(templates...)
-	attrs, err := s.attributeService.ListByTemplateNames(templateNames, func(listParam *sqlbuilder.ListParam) {
+	attrs := make([]Attribute, 0)
+	err = s.attributeService.ListByTemplateNames(&attrs, templateNames, func(listParam *sqlbuilder.ListParam) {
 		listParam.WithCustomFieldsFn(func(fs sqlbuilder.Fields) (customedFs sqlbuilder.Fields) {
 			fs.FirstMust().Apply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
 				f.SetDelayApply(func(f *sqlbuilder.Field, fs ...*sqlbuilder.Field) {
@@ -101,18 +104,18 @@ func (s HtmlTemplateApiService) GetComponent(componentName string) (componentHtm
 	return componentHtml, nil
 }
 
-type HtmlTemplateAdminService[C any, A any, R any] struct {
-	Template  TemplateSerivce[C]
-	Slot      SlotService[A]
-	Attribute AttributeService[R]
+type HtmlTemplateAdminService struct {
+	Template  TemplateSerivce
+	Slot      SlotService
+	Attribute AttributeService
 }
 
-func NewHtmlTemplateAdminService[C any, A any, R any](dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) HtmlTemplateAdminService[C, A, R] {
+func NewHtmlTemplateAdminService(dbHander sqlbuilder.Handler, customTableFn func(tableConfig TableConfig) (customedTableConfig TableConfig)) HtmlTemplateAdminService {
 	tableConfig := CustomTableConfig(dbHander, customTableFn)
-	componentService := newComponentSerivce[C](tableConfig.Template)
-	slotNameService := newSlotService[A](tableConfig.Slot)
-	attributeService := newAttributeService[R](tableConfig.Attribute)
-	return HtmlTemplateAdminService[C, A, R]{
+	componentService := newComponentSerivce(tableConfig.Template)
+	slotNameService := newSlotService(tableConfig.Slot)
+	attributeService := newAttributeService(tableConfig.Attribute)
+	return HtmlTemplateAdminService{
 		Template:  componentService,
 		Slot:      slotNameService,
 		Attribute: attributeService,

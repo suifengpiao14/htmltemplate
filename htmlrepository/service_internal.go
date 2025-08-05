@@ -7,21 +7,20 @@ import (
 	"github.com/suifengpiao14/sqlbuilder"
 )
 
-type TemplateSerivce[C any] struct {
-	sqlbuilder.RepositoryQuery[C]
+type TemplateSerivce struct {
+	sqlbuilder.RepositoryQuery
 	sqlbuilder.RepositoryCommand
 }
 
-func newComponentSerivce[C any](tableConfig sqlbuilder.TableConfig) TemplateSerivce[C] {
-	repositoryQuery := sqlbuilder.NewRepositoryQuery[C](tableConfig)
-	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return TemplateSerivce[C]{
-		RepositoryQuery:   repositoryQuery,
-		RepositoryCommand: repositoryCommand,
+func newComponentSerivce(tableConfig sqlbuilder.TableConfig) TemplateSerivce {
+	repository := tableConfig.Repository()
+	return TemplateSerivce{
+		RepositoryQuery:   repository.RepositoryQuery,
+		RepositoryCommand: repository.RepositoryCommand,
 	}
 }
 
-func (s TemplateSerivce[C]) Set(c Template, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s TemplateSerivce) Set(c Template, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewTemplateNameField(c.TemplateName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewTemplateField(c.Template).SetRequired(true),
@@ -34,32 +33,31 @@ func (s TemplateSerivce[C]) Set(c Template, customFn sqlbuilder.CustomFnSetParam
 	return nil
 }
 
-func (s TemplateSerivce[C]) ListByTemplateNames(componentNames []string, customFn sqlbuilder.CustomFnListParam) (models []C, err error) {
+func (s TemplateSerivce) ListByTemplateNames(models any, componentNames []string, customFn sqlbuilder.CustomFnListParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewTemplateNamesField(componentNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
-	models, err = s.RepositoryQuery.All(fields, customFn)
+	err = s.RepositoryQuery.All(models, fields, customFn)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return models, nil
+	return nil
 }
 
-type SlotService[A any] struct {
-	sqlbuilder.RepositoryQuery[A]
+type SlotService struct {
+	sqlbuilder.RepositoryQuery
 	sqlbuilder.RepositoryCommand
 }
 
-func newSlotService[A any](tableConfig sqlbuilder.TableConfig) SlotService[A] {
-	repositoryQuery := sqlbuilder.NewRepositoryQuery[A](tableConfig)
-	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return SlotService[A]{
-		RepositoryQuery:   repositoryQuery,
-		RepositoryCommand: repositoryCommand,
+func newSlotService(tableConfig sqlbuilder.TableConfig) SlotService {
+	repository := tableConfig.Repository()
+	return SlotService{
+		RepositoryQuery:   repository.RepositoryQuery,
+		RepositoryCommand: repository.RepositoryCommand,
 	}
 }
 
-func (s SlotService[A]) Set(slotName Slot, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s SlotService) Set(slotName Slot, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewComponentNameField(slotName.TemplateName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewSlotNameField(slotName.SlotName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
@@ -72,18 +70,18 @@ func (s SlotService[A]) Set(slotName Slot, customFn sqlbuilder.CustomFnSetParam)
 	}
 	return nil
 }
-func (s SlotService[A]) ListByComponentName(componentName string, customFn sqlbuilder.CustomFnListParam) (models []A, err error) {
+func (s SlotService) ListByComponentName(models any, componentName string, customFn sqlbuilder.CustomFnListParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewComponentNameField(componentName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
-	models, err = s.RepositoryQuery.All(fields, customFn)
+	err = s.RepositoryQuery.All(models, fields, customFn)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return models, nil
+	return nil
 }
 
-func (s SlotService[A]) Delete(slotName Slot, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s SlotService) Delete(slotName Slot, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 	ctx := context.Background()
 
 	_, err = s.RepositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
@@ -102,21 +100,20 @@ func (s SlotService[A]) Delete(slotName Slot, customFn sqlbuilder.CustomFnDelete
 	return nil
 }
 
-type AttributeService[R any] struct {
-	sqlbuilder.RepositoryQuery[R]
+type AttributeService struct {
+	sqlbuilder.RepositoryQuery
 	sqlbuilder.RepositoryCommand
 }
 
-func newAttributeService[R any](tableConfig sqlbuilder.TableConfig) AttributeService[R] {
-	repositoryQuery := sqlbuilder.NewRepositoryQuery[R](tableConfig)
-	repositoryCommand := sqlbuilder.NewRepositoryCommand(tableConfig)
-	return AttributeService[R]{
-		RepositoryQuery:   repositoryQuery,
-		RepositoryCommand: repositoryCommand,
+func newAttributeService(tableConfig sqlbuilder.TableConfig) AttributeService {
+	repository := tableConfig.Repository()
+	return AttributeService{
+		RepositoryQuery:   repository.RepositoryQuery,
+		RepositoryCommand: repository.RepositoryCommand,
 	}
 }
 
-func (s AttributeService[R]) Set(attribute Attribute, customFn sqlbuilder.CustomFnSetParam) (err error) {
+func (s AttributeService) Set(attribute Attribute, customFn sqlbuilder.CustomFnSetParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewTagIdField(attribute.TagId).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewAttributeNameField(attribute.AttributeName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
@@ -129,18 +126,18 @@ func (s AttributeService[R]) Set(attribute Attribute, customFn sqlbuilder.Custom
 	return nil
 }
 
-func (s AttributeService[R]) ListByTemplateNames(templateNames []string, customFn sqlbuilder.CustomFnListParam) (models []R, err error) {
+func (s AttributeService) ListByTemplateNames(models any, templateNames []string, customFn sqlbuilder.CustomFnListParam) (err error) {
 	fields := sqlbuilder.Fields{
 		NewTemplateNamesField(templateNames).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 	}
-	models, err = s.RepositoryQuery.All(fields, customFn)
+	err = s.RepositoryQuery.All(models, fields, customFn)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return models, nil
+	return nil
 }
 
-func (s AttributeService[R]) Delete(attribute Attribute, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
+func (s AttributeService) Delete(attribute Attribute, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
 	ctx := context.Background()
 	_, err = s.RepositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
 	if err != nil {

@@ -12,7 +12,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/suifengpiao14/funcs v0.0.25
 	github.com/suifengpiao14/memorytable v0.0.12
-	github.com/suifengpiao14/sqlbuilder v0.1.46
+	github.com/suifengpiao14/sqlbuilder v0.2.1
 	golang.org/x/net v0.33.0
 )
 
@@ -26,14 +26,18 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
+	github.com/jfcote87/sshdb v0.5.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/redis/go-redis/v9 v9.7.0 // indirect
-	github.com/suifengpiao14/cache v0.0.8 // indirect
+	github.com/suifengpiao14/cache v0.0.10 // indirect
+	github.com/suifengpiao14/sshmysql v0.0.6 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
