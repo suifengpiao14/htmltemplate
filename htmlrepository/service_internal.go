@@ -1,9 +1,6 @@
 package htmlrepository
 
 import (
-	"context"
-
-	"github.com/pkg/errors"
 	"github.com/suifengpiao14/sqlbuilder"
 )
 
@@ -82,13 +79,7 @@ func (s SlotService) ListByComponentName(models any, componentName string, custo
 }
 
 func (s SlotService) Delete(slotName Slot, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
-	ctx := context.Background()
 
-	_, err = s.RepositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
-	if err != nil {
-		err = errors.WithMessage(err, "should set sorft delete field by tableConfig.TableLevelFieldsHook")
-		return err
-	}
 	fields := sqlbuilder.Fields{
 		NewComponentNameField(slotName.TemplateName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewSlotNameField(slotName.SlotName).SetRequired(true).AppendWhereFn(sqlbuilder.ValueFnForward),
@@ -138,12 +129,6 @@ func (s AttributeService) ListByTemplateNames(models any, templateNames []string
 }
 
 func (s AttributeService) Delete(attribute Attribute, customFn sqlbuilder.CustomFnDeleteParam) (err error) {
-	ctx := context.Background()
-	_, err = s.RepositoryCommand.GetTableConfig().MergeTableLevelFields(ctx).DeletedAt()
-	if err != nil {
-		err = errors.WithMessage(err, "should set sorft delete field by tableConfig.TableLevelFieldsHook")
-		return err
-	}
 	fields := sqlbuilder.Fields{
 		NewTagIdField(attribute.TagId).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
 		NewAttributeNameField(attribute.AttributeName).SetRequired(true).ShieldUpdate(true).AppendWhereFn(sqlbuilder.ValueFnForward),
