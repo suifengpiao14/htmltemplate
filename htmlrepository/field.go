@@ -1,6 +1,6 @@
 package htmlrepository
 
-import "github.com/suifengpiao14/sqlbuilder"
+import "gitlab.huishoubao.com/gopackage/sqlbuilder"
 
 func NewTemplateNameField(componentName string) *sqlbuilder.Field {
 	return sqlbuilder.NewStringField(componentName, "templateName", "模版名称", 0)

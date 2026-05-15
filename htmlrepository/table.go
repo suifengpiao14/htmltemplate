@@ -1,6 +1,6 @@
 package htmlrepository
 
-import "github.com/suifengpiao14/sqlbuilder"
+import "gitlab.huishoubao.com/gopackage/sqlbuilder"
 
 type TableConfig struct {
 	Template  sqlbuilder.TableConfig

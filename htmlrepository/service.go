@@ -2,7 +2,7 @@ package htmlrepository
 
 import (
 	"github.com/suifengpiao14/htmltemplate/htmlcomponent"
-	"github.com/suifengpiao14/sqlbuilder"
+	"gitlab.huishoubao.com/gopackage/sqlbuilder"
 )
 
 type HtmlTemplateApiService struct {
